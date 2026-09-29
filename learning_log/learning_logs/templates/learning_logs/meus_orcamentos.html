@@ -1,0 +1,875 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=The+Seasons&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <title>Meus Orçamentos - Chef Edmilson</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    body {
+      background-color: #f5f5f5;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .topo {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background-color: rgba(0, 0, 0, 0);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 180px;
+      height: 70px;
+      min-width: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo img {
+      width: 220px;
+      height: 220px;
+      max-width: none;
+      position: absolute;
+      left: 50%;
+      top: -70px;
+      transform: translateX(-50%);
+      object-fit: contain;
+    }
+
+    .logo-dark,
+    .logo-light {
+      display: block;
+      font-family: "Arapey", serif;
+      font-size: 28px;
+      color: #1a1a1a;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      text-transform: none;
+      font-style: italic;
+    }
+
+    .logo-light {
+      display: none;
+      color: #fff;
+    }
+
+    .logo-dark-link {
+      display: none !important;
+    }
+
+    .logo-light-link {
+      display: inline-flex !important;
+    }
+
+    .logo span {
+      display: block;
+      font-family: "Arapey", serif;
+      font-style: italic;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .menu {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .menu a {
+      color: #1a1a1a;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+
+    .menu a:hover {
+      color: #d2aa77;
+    }
+
+    .btndestaque {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #c79c6b, #ddba88);
+      color: white !important;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      min-width: 150px;
+    }
+
+    .btn-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(210, 170, 119, 0.2);
+      color: #1a1a1a;
+      transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+      background-color: #d2aa77;
+      color: white !important;
+      transform: scale(1.1);
+    }
+
+    .menu li {
+      display: flex;
+      align-items: center;
+    }
+
+    .orcamento-container {
+      min-height: calc(100vh - 120px);
+      background-color: #f5f5f5;
+      padding: 120px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .orcamento-header {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto 32px;
+    }
+
+    .orcamento-header h1 {
+      font-family: "Arapey", serif;
+      font-size: 48px;
+      color: #333;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    .orcamento-header p {
+      color: #666;
+      font-size: 16px;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .page-shell {
+      width: min(1000px, 100%);
+      background: transparent;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.9);
+      border-radius: 10px;
+      text-align: center;
+      padding: 22px 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .stat-card h3 {
+      font-size: 36px;
+      color: #333;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    .stat-card p {
+      margin: 0;
+      color: #666;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .orcamentos-list {
+      background-color: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .orcamento-item {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 22px;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s ease;
+    }
+
+    .orcamento-item:last-child {
+      border-bottom: none;
+    }
+
+    .orcamento-item:hover {
+      background: #faf7f2;
+    }
+
+    .orcamento-info h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .orcamento-info p {
+      margin: 4px 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .orcamento-info .evento {
+      color: #d2aa77;
+      font-weight: 700;
+    }
+
+    .orcamento-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .status-pendente {
+      background: #fff3cd;
+      color: #856404;
+      border-color: #ffeaa7;
+    }
+
+    .status-respondido {
+      background: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+
+    .status-recusado {
+      background: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+
+    .btn-ver,
+    .btn-whatsapp,
+    .btn-voltar,
+    .btn-novo-orcamento {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-weight: 600;
+    }
+
+    .btn-ver {
+      background: #d2aa77;
+      color: white;
+      padding: 10px 18px;
+      font-size: 13px;
+    }
+
+    .btn-ver:hover {
+      background: #8b6914;
+    }
+
+    .btn-whatsapp {
+      background: #25d366;
+      color: white;
+      padding: 10px 16px;
+      font-size: 13px;
+      margin-top: 12px;
+      gap: 8px;
+    }
+
+    .btn-whatsapp:hover {
+      background: #1ea956;
+    }
+
+    .btn-voltar {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.7);
+      padding: 10px 18px;
+      font-size: 14px;
+    }
+
+    .btn-voltar:hover {
+      background: white;
+      color: #d2aa77;
+    }
+
+    .btn-novo-orcamento {
+      background: linear-gradient(135deg, #c79c6b, #ddba88);
+      color: white;
+      padding: 12px 20px;
+      margin-top: 20px;
+    }
+
+    .btn-novo-orcamento:hover {
+      box-shadow: 0 4px 12px rgba(199, 156, 107, 0.4);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .empty-state h2 {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 22px;
+    }
+
+    .empty-state p {
+      margin: 0 0 10px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-bg.open {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal h2 {
+      margin: 0 0 18px;
+      color: #d2aa77;
+      font-size: 30px;
+    }
+
+    .modal-row {
+      margin-bottom: 16px;
+    }
+
+    .modal-row label {
+      display: block;
+      color: #666;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .modal-row span {
+      color: #333;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .modal-close-btn {
+      background: #d2aa77;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .modal-close-btn:hover {
+      background: #8b6914;
+    }
+
+    .footer {
+      background: #0d1d2f;
+      color: white;
+      padding: 40px 20px 20px;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1.5fr;
+      gap: 40px;
+      padding: 0 20px 20px;
+    }
+
+    .footer-section h3,
+    .footer-section h4 {
+      margin: 0 0 20px;
+      color: #fff;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-section h3 {
+      text-transform: none;
+      font-size: 24px;
+      font-family: "Arapey", serif;
+      margin-bottom: 12px;
+    }
+
+    .footer-section p {
+      color: rgba(255,255,255,0.8);
+      line-height: 1.7;
+      font-size: 15px;
+      max-width: 260px;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.8);
+      font-size: 16px;
+    }
+
+    .footer-links a:hover {
+      color: #d2aa77;
+    }
+
+    .footer-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,0.8);
+      font-size: 15px;
+    }
+
+    .contact-item i {
+      color: #d2aa77;
+      width: 18px;
+      text-align: center;
+    }
+
+    .contact-item a,
+    .contact-item span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+    }
+
+    .footer-bottom a {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .footer-bottom a:hover {
+      color: #d2aa77;
+    }
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .topo {
+        padding: 18px 20px;
+      }
+
+      .menu {
+        gap: 14px;
+      }
+
+      .menu a {
+        font-size: 14px;
+      }
+
+      .orcamento-header h1 {
+        font-size: 36px;
+      }
+
+      .orcamento-item {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+      }
+
+      .ordamento-item .btn-ver {
+        width: 100%;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topo">
+      <div class="logo-wrapper">
+        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-dark-link" aria-label="Ir para a página inicial">
+          <div class="logo logo-dark">
+            <img src="{% static 'learning_logs/img/logo.png' %}" alt="Logo do site" />
+          </div>
+        </a>
+        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-light-link" aria-label="Ir para a página inicial">
+          <div class="logo logo-light">
+            <img src="{% static 'learning_logs/img/logo-positiva.png' %}" alt="Logo do site" />
+          </div>
+        </a>
+      </div>
+      <nav>
+      <ul class="menu">
+        <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+        <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+        <li>
+          <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque">Solicitar Orçamento</a>
+        </li>
+        <li class="user-menu-container">
+          <a href="{% url 'account_login' %}" class="btn-login" title="Login">
+            <i class="fas fa-user"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="orcamento-container">
+    <div class="orcamento-header">
+      <h1>Meus Orçamentos</h1>
+      <p>Acompanhe o status de suas solicitações</p>
+    </div>
+
+    <div class="page-shell">
+      <div class="stats">
+        <div class="stat-card">
+          <h3 id="totalCount">0</h3>
+          <p>Total de Orçamentos</p>
+        </div>
+        <div class="stat-card">
+          <h3 id="pendentesCount">0</h3>
+          <p>Pendentes</p>
+        </div>
+        <div class="stat-card">
+          <h3 id="respondidosCount">0</h3>
+          <p>Respondidos</p>
+        </div>
+        <div class="stat-card">
+          <h3 id="recusadosCount">0</h3>
+          <p>Recusados</p>
+        </div>
+      </div>
+
+      <div class="orcamentos-list" id="orcamentosList">
+        <div class="empty-state">
+          <i class="fas fa-file-alt"></i>
+          <h2>Nenhum orçamento encontrado</h2>
+          <p>Você ainda não solicitou nenhum orçamento</p>
+          <a href="{% url 'learning_logs:orcamento' %}" class="btn-novo-orcamento">+ Solicitar Novo Orçamento</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Chef Edmilson</h3>
+        <p>Alta cozinha à sua mesa. Jantares privados, catering e experiências gastronômicas personalizadas em Sorocaba e região.</p>
+      </div>
+
+      <div class="footer-section">
+        <h4>Navegação</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+          <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+          <li><a href="{% url 'learning_logs:orcamento' %}">Orçamento</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Contato</h4>
+        <div class="footer-contact">
+          <div class="contact-item">
+            <i class="fas fa-phone-alt"></i>
+            <a href="https://wa.me/5515997897875" target="_blank">(15) 99789-7875</a>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Sorocaba, SP — Brasil</span>
+          </div>
+          <div class="contact-item">
+            <i class="fab fa-instagram"></i>
+            <a href="https://instagram.com/chef_edmilson" target="_blank">@chef_edmilson</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Chef Edmilson. Todos os direitos reservados.</p>
+      <a href="#">Política de Privacidade</a>
+    </div>
+  </footer>
+
+  <div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+    <div class="modal" id="detailsModal">
+      <h2>Detalhes do Orçamento</h2>
+      <div class="modal-row">
+        <label>Tipo de Evento</label>
+        <span id="mTipo"></span>
+      </div>
+      <div class="modal-row">
+        <label>Data do Evento</label>
+        <span id="mData"></span>
+      </div>
+      <div class="modal-row">
+        <label>Número de Convidados</label>
+        <span id="mConvidados"></span>
+      </div>
+      <div class="modal-row">
+        <label>Endereço</label>
+        <span id="mEndereco"></span>
+      </div>
+      <div class="modal-row">
+        <label>Restrições Alimentares</label>
+        <span id="mRestricoes"></span>
+      </div>
+      <div class="modal-row">
+        <label>Observações</label>
+        <span id="mObs"></span>
+      </div>
+      <div class="modal-row">
+        <label>Status</label>
+        <span id="mStatus"></span>
+      </div>
+      <div id="whatsappContainer" style="display:none; margin-top: 20px;"></div>
+      <button class="modal-close-btn" onclick="document.getElementById('modalBg').classList.remove('open')">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    let orcamentos = [];
+    const pollingInterval = 5000;
+    const WHATSAPP_NUMBER = '5515997897875';
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function formatRestricoes(value) {
+      if (!value) return 'Nenhuma';
+
+      const mapa = {
+        vegetariano: 'Vegetariano',
+        vegano: 'Vegano',
+        semlactose: 'Sem lactose',
+        alergia: 'Alergia a frutos do mar'
+      };
+
+      return value
+        .split(',')
+        .map(item => item.trim())
+        .filter(Boolean)
+        .map(item => mapa[item] || item)
+        .join(', ');
+    }
+
+    function getStatusBadge(status) {
+      const statusMap = {
+        'pendente': { icon: '⏳', class: 'status-pendente', text: 'Pendente' },
+        'respondido': { icon: '✓', class: 'status-respondido', text: 'Respondido' },
+        'recusado': { icon: '✕', class: 'status-recusado', text: 'Recusado' }
+      };
+      const s = statusMap[status] || statusMap['pendente'];
+      return `<div class="orcamento-status ${s.class}">${s.icon} ${s.text}</div>`;
+    }
+
+    function getWhatsappLink(orcamento) {
+      const mensagem = encodeURIComponent(
+        `Olá, Chef Edmilson! Gostaria de continuar a conversa sobre o meu orçamento de ${orcamento.tipo_evento} para ${orcamento.data_evento || 'a data do evento'}.`
+      );
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${mensagem}`;
+    }
+
+    async function fetchOrcamentos() {
+      try {
+        const response = await fetch('{% url "learning_logs:meus_orcamentos_api" %}');
+        const data = await response.json();
+        orcamentos = data.orcamentos;
+        renderOrcamentos();
+        updateStats();
+      } catch (error) {
+        console.error('Erro ao buscar orçamentos:', error);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('totalCount').textContent = orcamentos.length;
+      document.getElementById('pendentesCount').textContent = orcamentos.filter(o => o.status === 'pendente').length;
+      document.getElementById('respondidosCount').textContent = orcamentos.filter(o => o.status === 'respondido').length;
+      document.getElementById('recusadosCount').textContent = orcamentos.filter(o => o.status === 'recusado').length;
+    }
+
+    function renderOrcamentos() {
+      const list = document.getElementById('orcamentosList');
+
+      if (orcamentos.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-file-alt"></i>
+            <h2>Nenhum orçamento encontrado</h2>
+            <p>Você ainda não solicitou nenhum orçamento</p>
+            <a href="{% url 'learning_logs:orcamento' %}" class="btn-novo-orcamento">+ Solicitar Novo Orçamento</a>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = orcamentos.map(o => {
+        const whatsappButton = o.status === 'respondido'
+          ? `<a class="btn-whatsapp" href="${getWhatsappLink(o)}" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Conversar no WhatsApp</a>`
+          : '';
+
+        return `
+          <div class="orcamento-item">
+            <div class="orcamento-info">
+              <h3>${o.nome}</h3>
+              <p class="evento">${o.tipo_evento.charAt(0).toUpperCase() + o.tipo_evento.slice(1)}</p>
+              <p><strong>Data:</strong> ${formatDate(o.data_evento)}</p>
+              <p><strong>Convidados:</strong> ${o.convidados}</p>
+              ${whatsappButton}
+            </div>
+            <div>${getStatusBadge(o.status)}</div>
+            <button class="btn-ver" onclick="openModal(${o.id})">Detalhes</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openModal(id) {
+      const orcamento = orcamentos.find(o => o.id === id);
+      if (!orcamento) return;
+
+      document.getElementById('mTipo').textContent = orcamento.tipo_evento.charAt(0).toUpperCase() + orcamento.tipo_evento.slice(1);
+      document.getElementById('mData').textContent = formatDate(orcamento.data_evento);
+      document.getElementById('mConvidados').textContent = orcamento.convidados + ' pessoas';
+      document.getElementById('mEndereco').textContent = `${orcamento.rua}, ${orcamento.numero} - ${orcamento.bairro}, ${orcamento.cidade}/${orcamento.estado}`;
+      document.getElementById('mRestricoes').textContent = formatRestricoes(orcamento.restricoes);
+      document.getElementById('mObs').textContent = orcamento.mensagem || 'Sem observações';
+
+      const statusMap = { 'pendente': 'Pendente', 'respondido': 'Respondido', 'recusado': 'Recusado' };
+      document.getElementById('mStatus').textContent = statusMap[orcamento.status];
+
+      const whatsappContainer = document.getElementById('whatsappContainer');
+      if (orcamento.status === 'respondido') {
+        whatsappContainer.innerHTML = `
+          <a class="btn-whatsapp" href="${getWhatsappLink(orcamento)}" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp"></i> Conversar com o Chef pelo WhatsApp
+          </a>
+        `;
+        whatsappContainer.style.display = 'block';
+      } else {
+        whatsappContainer.style.display = 'none';
+        whatsappContainer.innerHTML = '';
+      }
+
+      document.getElementById('modalBg').classList.add('open');
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('modalBg')) {
+        document.getElementById('modalBg').classList.remove('open');
+      }
+    }
+
+    fetchOrcamentos();
+    setInterval(fetchOrcamentos, pollingInterval);
+  </script>
+</body>
+</html>

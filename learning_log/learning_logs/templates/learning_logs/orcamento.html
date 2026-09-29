@@ -1,0 +1,859 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chef Edmilson - Solicitar Orçamento{% endblock %}
+
+{% block content %}
+<style>
+        /* ===== CONTAINER PRINCIPAL ===== */
+        .orcamento-container {
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            padding: 120px 20px 80px;
+        }
+
+        /* ===== CABEÇALHO DA PÁGINA ===== */
+        .orcamento-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 36px;
+        }
+        .orcamento-header h1 {
+            font-family: 'Georgia', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        .orcamento-header p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar-container {
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+        .progress-indicator {
+            text-align: center;
+        }
+        .progress-text {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #c79c6b;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c79c6b, #ddba88);
+            width: 25%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        /* ===== CARD DO FORMULÁRIO ===== */
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 44px 48px 40px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+        }
+
+        /* ===== FORM STEPS (controle de exibição) ===== */
+        .form-step {
+            display: none !important;
+        }
+        .form-step.active {
+            display: block !important;
+            animation: fadeInStep 0.3s ease;
+        }
+        @keyframes fadeInStep {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CABEÇALHO DE CADA ETAPA ===== */
+        .step-header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1.5px solid #f0f0f0;
+        }
+        .step-header h2 {
+            font-family: 'Georgia', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+        .step-header p {
+            font-size: 13px;
+            color: #999;
+            margin: 0;
+        }
+
+        /* ===== GRUPOS DE CAMPOS ===== */
+        .orcamento-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            letter-spacing: 0.1px;
+        }
+        .required { color: #e74c3c; }
+        .optional  { color: #aaa; font-weight: 400; font-size: 11px; }
+
+        /* ===== INPUTS, SELECT, TEXTAREA ===== */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 11px 14px;
+            border: 1px solid #ddd;
+            background-color: #fafafa;
+            border-radius: 7px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            color: #333;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #c79c6b;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(199,156,107,0.12);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #bbb;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 110px;
+        }
+        .form-group select {
+            appearance: auto;
+            cursor: pointer;
+        }
+
+        /* ===== GRID DE DUAS COLUNAS ===== */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .form-row .form-group {
+            margin-bottom: 0;
+        }
+
+        /* ===== ETAPA 4 — linha Cidade/Estado e CEP separado ===== */
+        .row-cidade-estado {
+            display: grid;
+            grid-template-columns: 1fr 80px;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+        .row-cidade-estado .form-group {
+            margin-bottom: 0;
+        }
+
+        /* ===== CHECKBOXES ESTILO PILL ===== */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .checkbox-item {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        .checkbox-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .checkbox-item span {
+            display: inline-block;
+            padding: 8px 18px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 13px;
+            color: #555;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .checkbox-item input[type="checkbox"]:checked + span {
+            background: linear-gradient(135deg, #c79c6b, #ddba88);
+            color: #fff;
+            border-color: #c79c6b;
+            font-weight: 600;
+        }
+        .checkbox-item:hover span {
+            border-color: #c79c6b;
+        }
+
+        /* ===== MENSAGENS DE ERRO ===== */
+        .error-message {
+            color: #e74c3c;
+            font-size: 11px;
+            margin-top: 2px;
+            display: none;
+        }
+        .error-message.visible { display: block; }
+        .form-group input.input-error,
+        .form-group select.input-error {
+            border-color: #e74c3c !important;
+            box-shadow: 0 0 0 3px rgba(231,76,60,0.08) !important;
+        }
+
+        /* ===== BOTÕES DE NAVEGAÇÃO ===== */
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 28px;
+        }
+        .btn-anterior,
+        .btn-proximo,
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: Arial, sans-serif;
+        }
+        .btn-anterior {
+            background-color: #f0f0f0;
+            color: #555;
+            border: 1px solid #ddd;
+        }
+        .btn-anterior:hover {
+            background-color: #e4e4e4;
+        }
+        .btn-proximo {
+            background: linear-gradient(135deg, #c79c6b, #ddba88);
+            color: #fff;
+            margin-left: auto;
+            padding: 12px 36px;
+        }
+        .btn-proximo:hover {
+            box-shadow: 0 4px 14px rgba(199,156,107,0.4);
+            transform: translateY(-1px);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #c79c6b, #ddba88);
+            color: #fff;
+            margin-left: auto;
+            padding: 12px 36px;
+        }
+        .btn-submit:hover {
+            box-shadow: 0 4px 14px rgba(199,156,107,0.4);
+            transform: translateY(-1px);
+        }
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== TELA DE SUCESSO ===== */
+        .sucesso-container {
+            display: none;
+            text-align: center;
+            padding: 20px 0 10px;
+        }
+        .sucesso-container.visivel {
+            display: block;
+            animation: fadeInStep 0.4s ease;
+        }
+        .sucesso-icone {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid #27ae60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+        .sucesso-icone i {
+            font-size: 34px;
+            color: #27ae60;
+        }
+        .sucesso-container h2 {
+            font-family: 'Georgia', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 14px;
+        }
+        .sucesso-container .sucesso-texto {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.7;
+            max-width: 420px;
+            margin: 0 auto 8px;
+        }
+        .sucesso-container .sucesso-email {
+            font-size: 13px;
+            color: #888;
+            font-style: italic;
+            margin-bottom: 28px;
+        }
+        .btn-voltar-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #c79c6b, #ddba88);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: Arial, sans-serif;
+        }
+        .btn-voltar-home:hover {
+            box-shadow: 0 4px 14px rgba(199,156,107,0.4);
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 680px) {
+            .form-container {
+                padding: 28px 20px 28px;
+            }
+            .orcamento-header h1 { font-size: 30px; }
+            .form-row,
+            .row-cidade-estado {
+                grid-template-columns: 1fr;
+            }
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+            .btn-proximo,
+            .btn-submit {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+            .btn-anterior {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <main class="orcamento-container">
+
+        <!-- CABEÇALHO DA PÁGINA -->
+        <section class="orcamento-header">
+            <h1>Solicitar Orçamento</h1>
+            <p>Preencha as informações do seu evento em 4 etapas simples.<br>Responderemos em até 48 horas úteis.</p>
+        </section>
+
+        <!-- BARRA DE PROGRESSO -->
+        <div class="progress-bar-container">
+            <div class="progress-indicator">
+                <span class="progress-text">Etapa <span id="currentStep">1</span> de 4</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD DO FORMULÁRIO -->
+        <section class="form-container">
+
+            <!-- TELA DE SUCESSO (oculta por padrão) -->
+            <div class="sucesso-container" id="sucessoContainer">
+                <div class="sucesso-icone">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+                <h2>Orçamento Enviado!</h2>
+                <p class="sucesso-texto">
+                    Obrigado por solicitar nossos serviços. Entraremos em contato em até
+                    48 horas úteis com uma proposta personalizada.
+                </p>
+                <a href="{% url 'learning_logs:index' %}" class="btn-voltar-home">
+                    <i class="bi bi-house"></i> Voltar para Home
+                </a>
+            </div>
+
+            <!-- FORMULÁRIO MULTI-ETAPAS -->
+            <form id="orcamentoForm" class="orcamento-form" method="post" action="{% url 'learning_logs:orcamento_submit' %}">
+                {% csrf_token %}
+
+                <!-- ETAPA 1: INFORMAÇÕES BÁSICAS -->
+                <div class="form-step active" id="step1">
+                    <div class="step-header">
+                        <h2>Informações Básicas</h2>
+                        <p>Comece nos contando um pouco sobre você</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nome">Nome completo <span class="required">*</span></label>
+                        <input type="text" id="nome" name="nome" placeholder="Seu nome completo">
+                        <span class="error-message" id="erroNome">Por favor, informe seu nome completo.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone <span class="required">*</span></label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(15) 99999-0000">
+                        <span class="error-message" id="erroTelefone">Por favor, informe seu telefone.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="convidados">Número de convidados <span class="required">*</span></label>
+                        <input type="number" id="convidados" name="convidados" placeholder="Ex: 20" min="1">
+                        <span class="error-message" id="erroConvidados">Por favor, informe o número de convidados.</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="btnProximo1" class="btn-proximo">
+                            Próximo <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ETAPA 2: DETALHES DO EVENTO -->
+                <div class="form-step" id="step2">
+                    <div class="step-header">
+                        <h2>Detalhes do Evento</h2>
+                        <p>Conte-nos sobre a ocasião especial</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipoEvento">Tipo de evento <span class="required">*</span></label>
+                        <select id="tipoEvento" name="tipoEvento">
+                            <option value="">Selecione um tipo de evento</option>
+                            <option value="casamento">Casamento</option>
+                            <option value="aniversario">Aniversário</option>
+                            <option value="corporativo">Evento Corporativo</option>
+                            <option value="formatura">Formatura</option>
+                            <option value="inaugural">Festa de Inauguração</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                        <span class="error-message" id="erroTipoEvento">Por favor, selecione o tipo de evento.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataEvento">Data do evento <span class="required">*</span></label>
+                        <input type="date" id="dataEvento" name="dataEvento">
+                        <span class="error-message" id="erroDataEvento">Por favor, informe a data do evento.</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="btnAnterior2" class="btn-anterior">
+                            <i class="bi bi-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" id="btnProximo2" class="btn-proximo">
+                            Próximo <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ETAPA 3: PREFERÊNCIAS & OBSERVAÇÕES -->
+                <div class="form-step" id="step3">
+                    <div class="step-header">
+                        <h2>Preferências & Observações</h2>
+                        <p>Compartilhe suas preferências e necessidades especiais</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Restrições alimentares <span class="optional">(opcional)</span></label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="restricoes" value="vegetariano">
+                                <span>Vegetariano</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="restricoes" value="vegano">
+                                <span>Vegano</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="restricoes" value="semlactose">
+                                <span>Sem lactose</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="restricoes" value="alergia">
+                                <span>Alergia a frutos do mar</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensagem">Mensagem adicional <span class="optional">(opcional)</span></label>
+                        <textarea id="mensagem" name="mensagem"
+                            placeholder="Descreva seus estilos culinários preferidos, restrições especiais, tema do evento, ou qualquer outra informação relevante..." rows="5"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="btnAnterior3" class="btn-anterior">
+                            <i class="bi bi-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" id="btnProximo3" class="btn-proximo">
+                            Próximo <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ETAPA 4: ENDEREÇO DO EVENTO -->
+                <div class="form-step" id="step4">
+                    <div class="step-header">
+                        <h2>Endereço do Evento</h2>
+                        <p>Onde o evento será realizado?</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rua">Rua <span class="required">*</span></label>
+                        <input type="text" id="rua" name="rua" placeholder="Nome da rua">
+                        <span class="error-message" id="erroRua">Por favor, informe o nome da rua.</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="numero">Número <span class="required">*</span></label>
+                            <input type="text" id="numero" name="numero" placeholder="Ex: 123">
+                            <span class="error-message" id="erroNumero">Por favor, informe o número.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento">Complemento <span class="optional">(opcional)</span></label>
+                            <input type="text" id="complemento" name="complemento" placeholder="Apto, sala, etc">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bairro">Bairro <span class="required">*</span></label>
+                        <input type="text" id="bairro" name="bairro" placeholder="Nome do bairro">
+                        <span class="error-message" id="erroBairro">Por favor, informe o bairro.</span>
+                    </div>
+
+                    <div class="row-cidade-estado">
+                        <div class="form-group">
+                            <label for="cidade">Cidade <span class="required">*</span></label>
+                            <input type="text" id="cidade" name="cidade" placeholder="Sua cidade">
+                            <span class="error-message" id="erroCidade">Por favor, informe a cidade.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado <span class="required">*</span></label>
+                            <input type="text" id="estado" name="estado" placeholder="Ex: SP" maxlength="2">
+                            <span class="error-message" id="erroEstado">Informe o estado.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cep">CEP <span class="required">*</span></label>
+                        <input type="text" id="cep" name="cep" placeholder="Ex: 18000-000" style="max-width: 200px;">
+                        <span class="error-message" id="erroCep">Por favor, informe o CEP.</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="btnAnterior4" class="btn-anterior">
+                            <i class="bi bi-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" id="btnEnviar" class="btn-submit">
+                            Enviar <i class="bi bi-check-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Chef Edmilson</h3>
+                <p>
+                    Alta cozinha à sua mesa. Jantares privados, catering e experiências
+                    gastronômicas personalizadas em Sorocaba e região.
+                </p>
+            </div>
+            <div class="footer-section">
+                <h4>Navegação</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+                    <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+                    <li><a href="{% url 'learning_logs:orcamento' %}">Orçamento</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <div class="footer-contact">
+                    <div class="contact-item">
+                        <i class="bi bi-telephone"></i>
+                        <a href="https://wa.me/5515997897875" target="_blank">(15) 99789-7875</a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Sorocaba, SP — Brasil</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="bi bi-instagram"></i>
+                        <a href="https://instagram.com/chef_edmilson" target="_blank">@chef_edmilson</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Chef Edmilson. Todos os direitos reservados.</p>
+            <a href="#">Política de Privacidade</a>
+        </div>
+    </footer>
+
+    <script src="{% static 'learning_logs/js/javascript.js' %}"></script>
+
+    <script>
+    (function () {
+        var currentStep = 1;
+        var totalSteps = 4;
+
+        var validacoes = {
+            1: [
+                { id: 'nome',       erroId: 'erroNome' },
+                { id: 'telefone',   erroId: 'erroTelefone' },
+                { id: 'convidados', erroId: 'erroConvidados', tipo: 'numero' }
+            ],
+            2: [
+                { id: 'tipoEvento', erroId: 'erroTipoEvento' },
+                { id: 'dataEvento', erroId: 'erroDataEvento' }
+            ],
+            3: [],
+            4: [
+                { id: 'rua',    erroId: 'erroRua' },
+                { id: 'numero', erroId: 'erroNumero' },
+                { id: 'bairro', erroId: 'erroBairro' },
+                { id: 'cidade', erroId: 'erroCidade' },
+                { id: 'estado', erroId: 'erroEstado' },
+                { id: 'cep',    erroId: 'erroCep' }
+            ]
+        };
+
+        function validarEtapa(step) {
+            var campos = validacoes[step] || [];
+            var valido = true;
+            campos.forEach(function (campo) {
+                var el    = document.getElementById(campo.id);
+                var erroEl = document.getElementById(campo.erroId);
+                var valor = el ? el.value.trim() : '';
+                var ok    = valor !== '';
+                if (ok && campo.tipo === 'email')  ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+                if (ok && campo.tipo === 'numero') ok = parseInt(valor, 10) >= 1;
+                if (el)     el.classList.toggle('input-error', !ok);
+                if (erroEl) erroEl.classList.toggle('visible', !ok);
+                if (!ok) valido = false;
+            });
+            return valido;
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(function (el) {
+                el.classList.remove('active');
+            });
+            var stepEl = document.getElementById('step' + step);
+            if (stepEl) stepEl.classList.add('active');
+
+            var currentStepEl = document.getElementById('currentStep');
+            if (currentStepEl) currentStepEl.textContent = step;
+
+            var progressFill = document.getElementById('progressFill');
+            if (progressFill) progressFill.style.width = ((step / totalSteps) * 100) + '%';
+
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        }
+
+        function mostrarSucesso() {
+            var form = document.getElementById('orcamentoForm');
+            var sucesso = document.getElementById('sucessoContainer');
+            if (form)   form.style.display = 'none';
+            if (sucesso) sucesso.classList.add('visivel');
+
+            var progressFill = document.getElementById('progressFill');
+            if (progressFill) progressFill.style.width = '100%';
+
+            var currentStepEl = document.getElementById('currentStep');
+            if (currentStepEl) currentStepEl.textContent = '4';
+
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        }
+
+        // Botões por step (cada step tem os próprios botões)
+        function bindBtn(id, fn) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('click', fn);
+        }
+
+        bindBtn('btnProximo1', function () {
+            if (validarEtapa(1)) { currentStep = 2; showStep(2); }
+        });
+        bindBtn('btnAnterior2', function () { currentStep = 1; showStep(1); });
+        bindBtn('btnProximo2',  function () {
+            if (validarEtapa(2)) { currentStep = 3; showStep(3); }
+        });
+        bindBtn('btnAnterior3', function () { currentStep = 2; showStep(2); });
+        bindBtn('btnProximo3',  function () { currentStep = 4; showStep(4); });
+        bindBtn('btnAnterior4', function () { currentStep = 3; showStep(3); });
+
+        // Botão Enviar (AJAX)
+        bindBtn('btnEnviar', function () {
+            if (!validarEtapa(4)) return;
+
+            var btnEnviar = document.getElementById('btnEnviar');
+            var restricoes = Array.from(
+                document.querySelectorAll('input[name="restricoes"]:checked')
+            ).map(function (el) { return el.value; });
+
+            var data = {
+                nome:        document.getElementById('nome').value,
+                telefone:    document.getElementById('telefone').value,
+                convidados:  document.getElementById('convidados').value,
+                tipoEvento:  document.getElementById('tipoEvento').value,
+                dataEvento:  document.getElementById('dataEvento').value,
+                restricoes:  restricoes,
+                mensagem:    document.getElementById('mensagem').value,
+                rua:         document.getElementById('rua').value,
+                numero:      document.getElementById('numero').value,
+                complemento: document.getElementById('complemento').value,
+                bairro:      document.getElementById('bairro').value,
+                cidade:      document.getElementById('cidade').value,
+                estado:      document.getElementById('estado').value,
+                cep:         document.getElementById('cep').value
+            };
+
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = 'Enviando... <i class="bi bi-hourglass-split"></i>';
+
+            fetch('{% url "learning_logs:orcamento_submit" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result.success) {
+                    mostrarSucesso();
+                } else {
+                    alert('Erro ao enviar orçamento: ' + (result.error || 'Tente novamente.'));
+                    btnEnviar.disabled = false;
+                    btnEnviar.innerHTML = 'Enviar <i class="bi bi-check-lg"></i>';
+                }
+            })
+            .catch(function (error) {
+                console.error('Erro:', error);
+                alert('Erro ao enviar orçamento. Verifique sua conexão e tente novamente.');
+                btnEnviar.disabled = false;
+                btnEnviar.innerHTML = 'Enviar <i class="bi bi-check-lg"></i>';
+            });
+        });
+
+        function formatarCep(valor) {
+            var apenasNumeros = (valor || '').replace(/\D/g, '').slice(0, 8);
+            if (apenasNumeros.length <= 5) return apenasNumeros;
+            return apenasNumeros.slice(0, 5) + '-' + apenasNumeros.slice(5);
+        }
+
+        function buscarCep() {
+            var inputCep = document.getElementById('cep');
+            var cep = (inputCep ? inputCep.value : '').replace(/\D/g, '');
+            if (!cep || cep.length !== 8) return;
+
+            var cepValue = inputCep.value;
+            inputCep.disabled = true;
+            inputCep.value = formatarCep(cepValue);
+
+            fetch('https://viacep.com.br/ws/' + cep + '/json/')
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    if (data.erro) {
+                        alert('CEP não encontrado. Preencha os dados manualmente.');
+                        return;
+                    }
+
+                    var rua = document.getElementById('rua');
+                    var bairro = document.getElementById('bairro');
+                    var cidade = document.getElementById('cidade');
+                    var estado = document.getElementById('estado');
+
+                    if (rua) rua.value = data.logradouro || '';
+                    if (bairro) bairro.value = data.bairro || '';
+                    if (cidade) cidade.value = data.localidade || '';
+                    if (estado) estado.value = data.uf || '';
+                })
+                .catch(function () {
+                    alert('Não foi possível buscar o CEP. Preencha os dados manualmente.');
+                })
+                .finally(function () {
+                    if (inputCep) inputCep.disabled = false;
+                });
+        }
+
+        var cepInput = document.getElementById('cep');
+        if (cepInput) {
+            cepInput.addEventListener('input', function () {
+                var valor = cepInput.value.replace(/\D/g, '').slice(0, 8);
+                cepInput.value = formatarCep(valor);
+
+                if (valor.length === 8) {
+                    buscarCep();
+                }
+            });
+        }
+
+        showStep(1);
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    })();
+    </script>
+{% endblock %}

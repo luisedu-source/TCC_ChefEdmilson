@@ -1,0 +1,526 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Painel Admin — Chef Edmilson{% endblock %}
+
+{% block body_class %}admin-dashboard-page{% endblock %}
+
+{% block content %}
+  <style>
+    /* ===== RESET para conteúdo admin ===== */
+    .ad-main * { box-sizing: border-box; }
+
+    /* ===== BASE — fundo claro igual ao site ===== */
+    body.admin-dashboard-page {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    /* ===== MAIN ===== */
+    .ad-main { padding: 36px 40px; }
+
+    /* ===== PAGE HEADER ===== */
+    .ad-page-title {
+      font-family: Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 3px;
+    }
+    .ad-page-title::after {
+      content: '';
+      display: block;
+      width: 56px;
+      height: 4px;
+      background: linear-gradient(90deg, #c79c6b, #ddba88);
+      border-radius: 2px;
+      margin-top: 8px;
+    }
+    .ad-page-sub {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 10px;
+      margin-bottom: 28px;
+    }
+
+    /* ===== STATS ===== */
+    .ad-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .ad-stat {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px 22px;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .ad-stat:hover {
+      box-shadow: 0 4px 12px rgba(199,156,107,0.12);
+      border-color: #e0c99a;
+    }
+    .ad-stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+    .ad-stat-val { font-size: 1.9rem; font-weight: 700; }
+    .ad-stat-val.gold   { color: #c79c6b; }
+    .ad-stat-val.yellow { color: #d4960a; }
+    .ad-stat-val.green  { color: #27ae60; }
+    .ad-stat-val.red    { color: #e74c3c; }
+
+    /* ===== TOOLBAR ===== */
+    .ad-toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .ad-search { flex: 1; min-width: 220px; position: relative; }
+    .ad-search input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      color: #333;
+      font-size: 0.87rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .ad-search input::placeholder { color: #bbb; }
+    .ad-search input:focus {
+      border-color: #c79c6b;
+      box-shadow: 0 0 0 3px rgba(199,156,107,0.1);
+    }
+    .ad-search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #bbb;
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .ad-select {
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      color: #333;
+      font-size: 0.87rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .ad-select:focus { border-color: #c79c6b; }
+
+    /* ===== TABELA ===== */
+    .ad-table-wrap {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e8e8e8;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .ad-table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .ad-table-wrap thead tr { background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+    .ad-table-wrap thead th {
+      padding: 13px 16px;
+      text-align: left;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+    .ad-table-wrap tbody tr { border-top: 1px solid #f5f5f5; transition: background 0.15s; }
+    .ad-table-wrap tbody tr:hover { background: #fdf8f3; }
+    .ad-table-wrap td { padding: 13px 16px; color: #555; vertical-align: middle; }
+    .ad-table-wrap td.name { color: #1a1a1a; font-weight: 600; }
+
+    /* ===== BADGES ===== */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+    .badge.pendente   { background: #fff8e1; color: #d4960a; border: 1px solid #f0d070; }
+    .badge.respondido { background: #e8f8f0; color: #27ae60; border: 1px solid #a0ddb8; }
+    .badge.recusado   { background: #fdecea; color: #e74c3c; border: 1px solid #f0a8a0; }
+
+    /* ===== BOTÃO AÇÃO ===== */
+    .ad-btn-action {
+      padding: 5px 13px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #888;
+      transition: all 0.2s;
+    }
+    .ad-btn-action:hover { border-color: #c79c6b; color: #c79c6b; }
+
+    /* ===== EMPTY & COUNT ===== */
+    .ad-empty { text-align: center; padding: 48px; color: #bbb; font-size: 0.9rem; }
+    .ad-count { font-size: 0.78rem; color: #bbb; margin-top: 10px; padding: 0 2px; }
+
+    /* ===== MODAL ===== */
+    .ad-modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+    .ad-modal-bg.open { display: flex; }
+    .ad-modal {
+      background: #fff;
+      border-radius: 14px;
+      padding: 36px;
+      max-width: 540px;
+      width: 100%;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+    .ad-modal h3 {
+      font-family: Georgia, serif;
+      font-size: 1.2rem;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .ad-modal-row { display: flex; gap: 20px; margin-bottom: 14px; }
+    .ad-modal-field { flex: 1; }
+    .ad-modal-field label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+    .ad-modal-field span { font-size: 0.88rem; color: #444; line-height: 1.5; }
+
+    /* ===== STATUS BUTTONS ===== */
+    .ad-modal-status {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .ad-modal-status > label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+    .ad-status-btns { display: flex; gap: 8px; }
+    .ad-status-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      color: #888;
+      transition: all 0.2s;
+    }
+    .ad-status-btn.pendente   { color: #d4960a; border-color: #f0d070; }
+    .ad-status-btn.respondido { color: #27ae60; border-color: #a0ddb8; }
+    .ad-status-btn.recusado   { color: #e74c3c; border-color: #f0a8a0; }
+    .ad-status-btn.pendente.active,   .ad-status-btn.pendente:hover   { background: #fff8e1; border-color: #d4960a; }
+    .ad-status-btn.respondido.active, .ad-status-btn.respondido:hover { background: #e8f8f0; border-color: #27ae60; }
+    .ad-status-btn.recusado.active,   .ad-status-btn.recusado:hover   { background: #fdecea; border-color: #e74c3c; }
+
+    .ad-status-msg { font-size: 0.75rem; margin-top: 8px; min-height: 18px; color: #aaa; }
+
+    .ad-modal-close {
+      width: 100%;
+      padding: 11px;
+      margin-top: 18px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 7px;
+      color: #888;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+    .ad-modal-close:hover { border-color: #c79c6b; color: #c79c6b; background: #fdf8f3; }
+
+    /* ===== BARRA DOURADA DECORATIVA (igual ao site) ===== */
+    .barra-bonita {
+      width: 56px;
+      height: 4px;
+      background: linear-gradient(90deg, #c79c6b, #ddba88);
+      border-radius: 4px;
+      margin: 8px 0 20px;
+    }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 900px) {
+      .ad-stats { grid-template-columns: repeat(2, 1fr); }
+      .ad-main { padding: 24px 20px; }
+    }
+    @media (max-width: 600px) {
+      .ad-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+  </style>
+
+  <!-- ===== CONTEÚDO ===== -->
+  <div class="ad-main">
+
+    <div class="ad-page-title">Solicitações de Orçamento</div>
+    <div class="barra-bonita"></div>
+    <div class="ad-page-sub">Gerencie todas as solicitações recebidas</div>
+
+    <!-- STATS -->
+    <div class="ad-stats">
+      <div class="ad-stat">
+        <div class="ad-stat-label">Total</div>
+        <div class="ad-stat-val gold" id="statTotal">0</div>
+      </div>
+      <div class="ad-stat">
+        <div class="ad-stat-label">Pendentes</div>
+        <div class="ad-stat-val yellow" id="statPend">0</div>
+      </div>
+      <div class="ad-stat">
+        <div class="ad-stat-label">Respondidos</div>
+        <div class="ad-stat-val green" id="statResp">0</div>
+      </div>
+      <div class="ad-stat">
+        <div class="ad-stat-label">Recusados</div>
+        <div class="ad-stat-val red" id="statRec">0</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="ad-toolbar">
+      <div class="ad-search">
+        <span class="ad-search-icon"><i class="bi bi-search"></i></span>
+        <input type="text" id="searchInput" placeholder="Buscar por nome ou evento..." oninput="render()" />
+      </div>
+      <select class="ad-select" id="filterStatus" onchange="render()">
+        <option value="">Todos os status</option>
+        <option value="pendente">Pendente</option>
+        <option value="respondido">Respondido</option>
+        <option value="recusado">Recusado</option>
+      </select>
+      <select class="ad-select" id="filterEvento" onchange="render()">
+        <option value="">Todos os eventos</option>
+        <option value="casamento">Casamento</option>
+        <option value="aniversario">Aniversário</option>
+        <option value="corporativo">Corporativo</option>
+        <option value="formatura">Formatura</option>
+        <option value="inaugural">Inauguração</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+
+    <!-- TABELA -->
+    <div class="ad-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Contato</th>
+            <th>Evento</th>
+            <th>Data do Evento</th>
+            <th>Convidados</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="ad-empty" id="emptyMsg" style="display:none;">
+        <i class="bi bi-inbox" style="font-size:2rem;color:#ddd;display:block;margin-bottom:10px;"></i>
+        Nenhuma solicitação encontrada.
+      </div>
+    </div>
+    <div class="ad-count" id="countMsg"></div>
+
+  </div>
+
+  <!-- ===== MODAL ===== -->
+  <div class="ad-modal-bg" id="modalBg" onclick="closeModal(event)">
+    <div class="ad-modal">
+      <h3>Detalhes da Solicitação</h3>
+      <div class="ad-modal-row">
+        <div class="ad-modal-field"><label>Nome</label><span id="mNome"></span></div>
+        <div class="ad-modal-field"><label>Convidados</label><span id="mConv"></span></div>
+      </div>
+      <div class="ad-modal-row">
+        <div class="ad-modal-field"><label>Telefone</label><span id="mTel"></span></div>
+        <div class="ad-modal-field"><label>Tipo de Evento</label><span id="mEvento"></span></div>
+      </div>
+      <div class="ad-modal-row">
+        <div class="ad-modal-field"><label>Data do Evento</label><span id="mData"></span></div>
+        <div class="ad-modal-field"><label>Endereço</label><span id="mEndereco"></span></div>
+      </div>
+      <div class="ad-modal-row">
+        <div class="ad-modal-field"><label>Restrições</label><span id="mRestricoes"></span></div>
+        <div class="ad-modal-field" style="flex:2"><label>Observações</label><span id="mMsg"></span></div>
+      </div>
+      <div class="ad-modal-status">
+        <label>Alterar Status</label>
+        <div class="ad-status-btns">
+          <button class="ad-status-btn pendente"   onclick="setStatus('pendente')">&#9679; Pendente</button>
+          <button class="ad-status-btn respondido" onclick="setStatus('respondido')">&#10003; Respondido</button>
+          <button class="ad-status-btn recusado"   onclick="setStatus('recusado')">&#10005; Recusado</button>
+        </div>
+        <div class="ad-status-msg" id="statusMsg"></div>
+      </div>
+      <button class="ad-modal-close" onclick="document.getElementById('modalBg').classList.remove('open')">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    var orcamentos = JSON.parse('{{ orcamentos_json|escapejs }}');
+    var currentId  = null;
+    var csrfToken  = '{{ csrf_token }}';
+    var UPDATE_URL = '/api/orcamentos/';
+
+    function stats() {
+      document.getElementById('statTotal').textContent = orcamentos.length;
+      document.getElementById('statPend').textContent  = orcamentos.filter(function(o){ return o.status === 'pendente';   }).length;
+      document.getElementById('statResp').textContent  = orcamentos.filter(function(o){ return o.status === 'respondido'; }).length;
+      document.getElementById('statRec').textContent   = orcamentos.filter(function(o){ return o.status === 'recusado';   }).length;
+    }
+
+    function filtered() {
+      var q  = (document.getElementById('searchInput').value || '').toLowerCase();
+      var fs = document.getElementById('filterStatus').value;
+      var fe = document.getElementById('filterEvento').value;
+      return orcamentos.filter(function(o) {
+        var matchQ = !q  || (o.nome        || '').toLowerCase().includes(q)
+                         || (o.tipo_evento || '').toLowerCase().includes(q);
+        var matchS = !fs || o.status      === fs;
+        var matchE = !fe || o.tipo_evento === fe;
+        return matchQ && matchS && matchE;
+      });
+    }
+
+    function fmt(dateStr) {
+      if (!dateStr) return '—';
+      var p = dateStr.split('-');
+      return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : dateStr;
+    }
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : '—'; }
+
+    function render() {
+      var rows  = filtered();
+      var tbody = document.getElementById('tableBody');
+      document.getElementById('emptyMsg').style.display = rows.length ? 'none' : 'block';
+      document.getElementById('countMsg').textContent   = rows.length + ' solicitação(ões) encontrada(s)';
+      tbody.innerHTML = rows.map(function(o) {
+        return '<tr>' +
+          '<td class="name">' + (o.nome || '—') + '</td>' +
+          '<td><div>' + (o.telefone || '—') + '</div></td>' +
+          '<td>' + cap(o.tipo_evento) + '</td>' +
+          '<td>' + fmt(o.data_evento) + '</td>' +
+          '<td>' + (o.convidados || '—') + '</td>' +
+          '<td><span class="badge ' + o.status + '">' + cap(o.status) + '</span></td>' +
+          '<td><button class="ad-btn-action" onclick="openModal(' + o.id + ')">&#128065; Ver</button></td>' +
+        '</tr>';
+      }).join('');
+      stats();
+    }
+
+    function openModal(id) {
+      var o = orcamentos.find(function(x){ return x.id === id; });
+      if (!o) return;
+      currentId = id;
+      document.getElementById('mNome').textContent       = o.nome        || '—';
+      document.getElementById('mConv').textContent       = (o.convidados || '—') + ' pessoas';
+      document.getElementById('mTel').textContent        = o.telefone    || '—';
+      document.getElementById('mEvento').textContent     = cap(o.tipo_evento);
+      document.getElementById('mData').textContent       = fmt(o.data_evento);
+      document.getElementById('mRestricoes').textContent = o.restricoes  || 'Nenhuma';
+      document.getElementById('mMsg').textContent        = o.mensagem    || 'Sem observações.';
+      document.getElementById('statusMsg').textContent   = '';
+      var partes = [];
+      if (o.rua)         partes.push(o.rua + (o.numero ? ', ' + o.numero : ''));
+      if (o.complemento) partes.push(o.complemento);
+      if (o.bairro)      partes.push(o.bairro);
+      if (o.cidade)      partes.push(o.cidade + (o.estado ? '/' + o.estado : ''));
+      document.getElementById('mEndereco').textContent = partes.join(' — ') || '—';
+      document.querySelectorAll('.ad-status-btn').forEach(function(b){ b.classList.remove('active'); });
+      var activeBtn = document.querySelector('.ad-status-btn.' + o.status);
+      if (activeBtn) activeBtn.classList.add('active');
+      document.getElementById('modalBg').classList.add('open');
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('modalBg')) {
+        document.getElementById('modalBg').classList.remove('open');
+      }
+    }
+
+    function setStatus(newStatus) {
+      var o = orcamentos.find(function(x){ return x.id === currentId; });
+      if (!o) return;
+      var msgEl = document.getElementById('statusMsg');
+      msgEl.style.color = '#aaa';
+      msgEl.textContent = 'Salvando...';
+      fetch(UPDATE_URL + currentId + '/', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+        body: JSON.stringify({ status: newStatus })
+      })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(data) {
+        if (data.success) {
+          o.status = newStatus;
+          document.querySelectorAll('.ad-status-btn').forEach(function(b){ b.classList.remove('active'); });
+          var activeBtn = document.querySelector('.ad-status-btn.' + newStatus);
+          if (activeBtn) activeBtn.classList.add('active');
+          msgEl.style.color = '#27ae60';
+          msgEl.textContent = 'Status atualizado com sucesso.';
+          render();
+        } else {
+          msgEl.style.color = '#e74c3c';
+          msgEl.textContent = 'Erro: ' + (data.error || 'tente novamente.');
+        }
+      })
+      .catch(function(err) {
+        console.error('Erro:', err);
+        msgEl.style.color = '#e74c3c';
+        msgEl.textContent = 'Erro ao atualizar status.';
+      });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', render);
+    document.getElementById('filterStatus').addEventListener('change', render);
+    document.getElementById('filterEvento').addEventListener('change', render);
+    render();
+  </script>
+
+  <script src="{% static 'learning_logs/js/javascript.js' %}"></script>
+{% endblock %}

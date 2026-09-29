@@ -1,0 +1,189 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=The+Seasons&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'learning_logs/CSS/style.css' %}?v=2" />
+    <style>
+      .user-menu-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .btn-login {
+        cursor: pointer;
+        position: relative;
+      }
+
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        background-color: white;
+        min-width: 200px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        border-radius: 8px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+
+      .dropdown-menu.show {
+        display: block;
+      }
+
+      .dropdown-menu a,
+      .dropdown-menu button {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+      }
+
+      .dropdown-menu a:hover,
+      .dropdown-menu button:hover {
+        background-color: #f0f0f0;
+      }
+
+      .dropdown-menu a i,
+      .dropdown-menu button i {
+        margin-right: 10px;
+        width: 18px;
+        text-align: center;
+      }
+
+      .dropdown-menu .divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 5px 0;
+      }
+
+      .dropdown-menu form {
+        width: 100%;
+      }
+
+      .dropdown-menu form button {
+        color: #d32f2f;
+        padding: 12px 16px;
+      }
+
+      .dropdown-menu form button:hover {
+        background-color: #ffebee;
+      }
+
+      .user-greeting {
+        color: #333;
+        padding: 12px 16px;
+        font-weight: 500;
+        font-size: 14px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+    </style>
+    <title>{% block title %}Chef Edmilson{% endblock %}</title>
+  </head>
+  <body class="{% block body_class %}body-bg{% endblock %}">
+    <header class="topo">
+      <div class="logo-wrapper">
+        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-dark-link" aria-label="Ir para a página inicial">
+          <div class="logo logo-dark">
+            <img src="{% static 'learning_logs/img/logo.png' %}" alt="Logo do site" />
+          </div>
+        </a>
+        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-light-link" aria-label="Ir para a página inicial">
+          <div class="logo logo-light">
+            <img src="{% static 'learning_logs/img/logo-positiva.png' %}" alt="Logo do site" />
+          </div>
+        </a>
+      </div>
+      <nav>
+        <ul class="menu">
+          <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+          <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+          <li>
+            <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque">Solicitar Orçamento</a>
+          </li>
+          <li class="user-menu-container">
+            {% if user.is_authenticated %}
+              <button class="btn-login" id="userMenuBtn" title="Menu do usuário" onclick="toggleDropdown(event)">
+                <i class="fas fa-user"></i>
+              </button>
+              <div class="dropdown-menu" id="dropdownMenu">
+                <div class="user-greeting">
+                  Olá, {{ user.first_name|default:user.username|truncatechars:20 }}!
+                </div>
+                <a href="{% url 'learning_logs:meus_orcamentos' %}">
+                  <i class="fas fa-file-alt"></i>
+                  Meus Orçamentos
+                </a>
+                <a href="{% url 'account_change_password' %}">
+                  <i class="fas fa-lock"></i>
+                  Alterar senha
+                </a>
+                {% if user.is_staff %}
+                <a href="{% url 'learning_logs:admin_dashboard' %}">
+                  <i class="fas fa-chart-line"></i>
+                  Painel Admin
+                </a>
+                {% endif %}
+                <div class="divider"></div>
+                <form method="post" action="{% url 'account_logout' %}" style="margin: 0;">
+                  {% csrf_token %}
+                  <button type="submit">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                  </button>
+                </form>
+              </div>
+            {% else %}
+              <a href="{% url 'account_login' %}" class="btn-login" title="Login">
+                <i class="fas fa-user"></i>
+              </a>
+            {% endif %}
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <script>
+      function toggleDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('dropdownMenu');
+        dropdown.classList.toggle('show');
+      }
+
+      // Fechar dropdown ao clicar fora
+      document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('dropdownMenu');
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        
+        if (dropdown && userMenuBtn) {
+          if (!event.target.closest('.user-menu-container')) {
+            dropdown.classList.remove('show');
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Emails - Chef Edmilson{% endblock %}
+
+{% block body_class %}signup-page{% endblock %}
+
+{% block content %}
+    <main class="login-container">
+      <div class="login-wrapper">
+        <div class="login-header-top">
+          <span class="login-line"></span>
+          <h1>Meus Emails</h1>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+          <p>Olá, {{ user.email }}!</p>
+          
+          {% if user_emails %}
+            <h3 style="margin-top: 20px; margin-bottom: 15px; color: #333;">Emails cadastrados:</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              {% for email in user_emails %}
+                <li style="padding: 10px; background: #f9f9f9; margin-bottom: 10px; border-radius: 4px;">
+                  {{ email }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p style="color: #666; margin-top: 15px;">Você não tem emails verificados.</p>
+          {% endif %}
+
+          <div style="margin-top: 30px;">
+            <a href="{% url 'learning_logs:index' %}" style="color: #d2aa77; text-decoration: none; font-weight: 600;">
+              ← Voltar para o início
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Chef Edmilson</h3>
+          <p>
+            Alta cozinha à sua mesa. Jantares privados, catering e experiências
+            gastronômicas personalizadas em Sorocaba e região.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+            <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+            <li><a href="{% url 'learning_logs:orcamento' %}">Orçamento</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contato</h4>
+          <div class="footer-contact">
+            <div class="contact-item">
+              <i class="bi bi-telephone"></i>
+              <a href="https://wa.me/5515997897875" target="_blank"
+                >(15) 99789-7875</a
+              >
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-envelope"></i>
+              <a href="mailto:contato@chefedmilson.com.br"
+                >contato@chefedmilson.com.br</a
+              >
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-geo-alt"></i>
+              <span>Sorocaba, SP — Brasil</span>
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-instagram"></i>
+              <a href="https://instagram.com/chef_edmilson" target="_blank"
+                >@chef_edmilson</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chef Edmilson. Todos os direitos reservados.</p>
+        <a href="#">Política de Privacidade</a>
+      </div>
+    </footer>
+{% endblock %}

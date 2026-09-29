@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chef Edmilson - Sobre{% endblock %}
+
+{% block body_class %}sobre-page{% endblock %}
+
+{% block content %}
+    <section>
+      <div class="sobre-grid">
+        <div class="sobre-left">
+          <span class="barra-bonita"></span>
+          <h1>Edmilson</h1>
+          <div class="sobre-text">
+            <p>
+              Com mais de 20 anos de experiência, o Chef Edmilson é um mestre da
+              alta cozinha, especializado em criar experiências gastronômicas
+              personalizadas para jantares privados, eventos corporativos e
+              celebrações especiais. Sua paixão pela culinária e dedicação à
+              excelência o tornam a escolha ideal para quem busca uma
+              experiência culinária única e memorável em Sorocaba e região.
+            </p>
+            <p>
+              O Chef Edmilson é conhecido por sua habilidade em combinar
+              ingredientes frescos e técnicas culinárias inovadoras para criar
+              pratos que encantam tanto o paladar quanto a visão. Ele trabalha
+              de perto com seus clientes para entender suas preferências e
+              necessidades, garantindo que cada menu seja cuidadosamente
+              elaborado para atender às expectativas e criar momentos
+              inesquecíveis.
+            </p>
+            <p>
+              Além de sua expertise culinária, o Chef Edmilson é um profissional
+              dedicado, comprometido em oferecer um serviço impecável e uma
+              experiência gastronômica de alta qualidade. Seja para um jantar
+              íntimo, um evento corporativo ou uma celebração especial, o Chef
+              Edmilson está pronto para transformar sua ocasião em um evento
+              culinário extraordinário.
+            </p>
+          </div>
+        </div>
+        <div class="sobre-right">
+          <div class="photo-wrap">
+            <img src="{% static 'learning_logs/img/chef-edmilson.png' %}" alt="Chef Edmilson" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="timeline-section">
+      <h2>Trajetória</h2>
+      <div class="timeline" id="timeline">
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>2004</h3>
+            <p>Início da jornada na culinária, primeira experiência profissional</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>2008</h3>
+            <p>Especialização em alta cozinha na Itália</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>2012</h3>
+            <p>Abertura do primeiro restaurante em Sorocaba</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>2016</h3>
+            <p>Reconhecimento em gastronomia e prêmios internacionais</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>2020</h3>
+            <p>Especialização em eventos corporativos e jantares privados</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <h3>2024</h3>
+            <p>20+ anos de experiência e milhares de clientes satisfeitos</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <span class="barra-bonita"></span>
+      <h2>Missão & Valores</h2>
+      <p>Levar alta gastronomia a qualquer mesa, com respeito aos ingredientes, 
+        paixão pelo ofício e atenção aos detalhes. 
+        Acredito que a comida conecta pessoas, 
+        cria memórias e celebra momentos.</p>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Chef Edmilson</h3>
+          <p>
+            Alta cozinha à sua mesa. Jantares privados, catering e experiências
+            gastronômicas personalizadas em Sorocaba e região.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+            <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+            <li><a href="{% url 'learning_logs:orcamento' %}">Orçamento</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contato</h4>
+          <div class="footer-contact">
+            <div class="contact-item">
+              <i class="bi bi-telephone"></i>
+              <a href="https://wa.me/5515997897875" target="_blank"
+                >(15) 99789-7875</a
+              >
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-geo-alt"></i>
+              <span>Sorocaba, SP — Brasil</span>
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-instagram"></i>
+              <a href="https://instagram.com/chef_edmilson" target="_blank"
+                >@chef_edmilson</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chef Edmilson. Todos os direitos reservados.</p>
+        <a href="#">Política de Privacidade</a>
+      </div>
+    </footer>
+
+    <script src="{% static 'learning_logs/js/javascript.js' %}"></script>
+{% endblock %}

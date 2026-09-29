@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chef Edmilson - Início{% endblock %}
+
+{% block content %}
+    <main class="hero">
+      <div class="conteudo">
+        <h1>Alta cozinha à sua mesa</h1>
+        <p class="descricao">
+          Jantares privados, menus personalizados e experiências gastronômicas
+          sob medida em Sorocaba e região.
+        </p>
+        <div class="botoes-hero">
+          <a href="{% url 'learning_logs:orcamento' %}" class="btn btn-primario"
+            >Solicitar Orçamento</a
+          >
+          <a href="{% url 'learning_logs:sobre' %}" class="btn btn-secundario">Conheça o Chef</a>
+        </div>
+      </div>
+    </main>
+
+    <section class="ideias-menus">
+      <div class="container">
+        <h2>Ideias Pratos</h2>
+        <p class="subtitulo">Confira algumas inspirações para seu evento</p>
+
+        <div class="cards-container">
+          <div class="card">
+            <img src="{% static 'learning_logs/img/prato1.jpg' %}" alt="Prato Premium" />
+            <h3>Ratatulle com Cordeiro</h3>
+            <p>Ratatulle com Cordeiro ao Molho de Vinho.</p>
+          </div>
+
+          <div class="card">
+            <img src="{% static 'learning_logs/img/prato2.jpg' %}" alt="Prato Executivo" />
+            <h3>Risoto</h3>
+            <p>Risoto de Ervilha com Carré de Cordeiro.</p>
+          </div>
+
+          <div class="card">
+            <img src="{% static 'learning_logs/img/prato3.jpg' %}" alt="Prato Festivo" />
+            <h3>Burrata a Milanesa</h3>
+            <p>Burrata a Milanesa com Gergelim e Vinagrete de Aspargos.</p>
+          </div>
+
+          <div class="card">
+            <img src="{% static 'learning_logs/img/prato4.jpg' %}" alt="Prato Gourmet" />
+            <h3>Paella</h3>
+            <p>Paella de Camarão com Frutos do Mar com Pimentão.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Chef Edmilson</h3>
+          <p>
+            Alta cozinha à sua mesa. Jantares privados, catering e experiências
+            gastronômicas personalizadas em Sorocaba e região.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h4>Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
+            <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+            <li><a href="{% url 'learning_logs:orcamento' %}">Orçamento</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contato</h4>
+          <div class="footer-contact">
+            <div class="contact-item">
+              <i class="bi bi-telephone"></i>
+              <a href="https://wa.me/5515997897875" target="_blank"
+                >(15) 99789-7875</a
+              >
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-geo-alt"></i>
+              <span>Sorocaba, SP — Brasil</span>
+            </div>
+            <div class="contact-item">
+              <i class="bi bi-instagram"></i>
+              <a href="https://instagram.com/chef_edmilson" target="_blank"
+                >@chef_edmilson</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Chef Edmilson. Todos os direitos reservados.</p>
+        <a href="#">Política de Privacidade</a>
+      </div>
+    </footer>
+
+    <script src="{% static 'learning_logs/js/javascript.js' %}"></script>
+{% endblock %}
