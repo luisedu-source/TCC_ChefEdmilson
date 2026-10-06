@@ -20,6 +20,7 @@
       .user-menu-container {
         position: relative;
         display: inline-block;
+        order: 2;
       }
 
       .btn-login {
@@ -98,10 +99,239 @@
         font-size: 14px;
         border-bottom: 1px solid #e0e0e0;
       }
+
+      .main-nav {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      .menu {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        gap: 60px;
+      }
+
+      .menu a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .menu a i {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 46px;
+        height: 46px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(210, 170, 119, 0.8);
+        border-radius: 50%;
+        cursor: pointer;
+        padding: 9px 8px;
+        margin-left: auto;
+        z-index: 20;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        transition: all 0.25s ease;
+      }
+
+      .menu-toggle:hover {
+        background: rgba(210, 170, 119, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 20px;
+        height: 2px;
+        background: #f2d2a3;
+        border-radius: 999px;
+        transition: all 0.3s ease;
+      }
+
+      .menu-toggle span + span {
+        margin-top: 5px;
+      }
+
+      .menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 5px);
+      }
+
+      .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -5px);
+      }
+
+      .nav-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 17, 17, 0.24);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+        z-index: 8;
+      }
+
+      .nav-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      @media (max-width: 1100px) {
+        .main-nav {
+          display: flex !important;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 12px;
+        }
+
+        .menu {
+          display: none !important;
+        }
+
+        .menu a i {
+          display: inline-block;
+        }
+
+        .user-menu-container {
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+          order: 1;
+          margin: 0;
+        }
+
+        .user-menu-container .btn-login {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.14);
+          border: 1px solid rgba(255,255,255,0.28);
+          color: #f3f3f3;
+          font-size: 18px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+          display: flex !important;
+          order: 2;
+          border-color: rgba(210, 170, 119, 0.8);
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .menu-toggle span {
+          background: #f2d2a3;
+        }
+
+        .menu {
+          display: none !important;
+          position: absolute;
+          top: calc(100% + 14px);
+          right: 0;
+          flex-direction: column;
+          width: min(340px, 82vw);
+          background: rgba(255, 255, 255, 0.96);
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          border-radius: 18px;
+          box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
+          padding: 12px;
+          gap: 0;
+          align-items: stretch;
+          z-index: 100;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        .menu.open {
+          display: flex !important;
+        }
+
+        .menu li {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .menu a {
+          color: #1a1a1a !important;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 10px;
+          font-size: 1.05rem;
+          font-weight: 500;
+          letter-spacing: -0.02em;
+          text-align: left;
+          font-family: Arial, sans-serif;
+          transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+        }
+
+        .menu a i {
+          width: 18px;
+          text-align: center;
+          color: #3a3a3a;
+          font-size: 1rem;
+        }
+
+        .menu li:nth-child(3) a {
+          background: #d7b38b;
+          color: #fff !important;
+          font-weight: 700;
+          border-radius: 12px;
+          text-align: center;
+          padding: 14px 16px;
+          box-shadow: 0 6px 14px rgba(199, 156, 107, 0.22);
+        }
+
+        .menu li:nth-child(3) a i {
+          color: #fff;
+        }
+
+        .menu li:nth-child(3) a:hover {
+          background: #caa777;
+          color: #fff !important;
+          transform: translateY(-1px);
+        }
+      }
+
+      @media (min-width: 1101px) {
+        .menu-toggle {
+          display: none !important;
+        }
+
+        .menu {
+          display: flex !important;
+        }
+
+        .user-menu-container {
+          display: inline-block !important;
+          order: 2;
+        }
+      }
     </style>
     <title>{% block title %}Chef Edmilson{% endblock %}</title>
   </head>
   <body class="{% block body_class %}body-bg{% endblock %}">
+    <div class="nav-backdrop" id="navBackdrop"></div>
     <header class="topo">
       <div class="logo-wrapper">
         <a href="{% url 'learning_logs:index' %}" class="logo-link logo-dark-link" aria-label="Ir para a página inicial">
@@ -115,52 +345,59 @@
           </div>
         </a>
       </div>
-      <nav>
-        <ul class="menu">
-          <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
-          <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+      <nav class="main-nav">
+        <ul class="menu" id="navMenu">
+          <li><a href="{% url 'learning_logs:index' %}"><i class="fas fa-house"></i> Início</a></li>
+          <li><a href="{% url 'learning_logs:sobre' %}"><i class="fas fa-circle-question"></i> Sobre</a></li>
           <li>
-            <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque">Solicitar Orçamento</a>
-          </li>
-          <li class="user-menu-container">
-            {% if user.is_authenticated %}
-              <button class="btn-login" id="userMenuBtn" title="Menu do usuário" onclick="toggleDropdown(event)">
-                <i class="fas fa-user"></i>
-              </button>
-              <div class="dropdown-menu" id="dropdownMenu">
-                <div class="user-greeting">
-                  Olá, {{ user.first_name|default:user.username|truncatechars:20 }}!
-                </div>
-                <a href="{% url 'learning_logs:meus_orcamentos' %}">
-                  <i class="fas fa-file-alt"></i>
-                  Meus Orçamentos
-                </a>
-                <a href="{% url 'account_change_password' %}">
-                  <i class="fas fa-lock"></i>
-                  Alterar senha
-                </a>
-                {% if user.is_staff %}
-                <a href="{% url 'learning_logs:admin_dashboard' %}">
-                  <i class="fas fa-chart-line"></i>
-                  Painel Admin
-                </a>
-                {% endif %}
-                <div class="divider"></div>
-                <form method="post" action="{% url 'account_logout' %}" style="margin: 0;">
-                  {% csrf_token %}
-                  <button type="submit">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Sair
-                  </button>
-                </form>
-              </div>
-            {% else %}
-              <a href="{% url 'account_login' %}" class="btn-login" title="Login">
-                <i class="fas fa-user"></i>
-              </a>
-            {% endif %}
+            <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque"><i class="fas fa-file-signature"></i> Solicitar Orçamento</a>
           </li>
         </ul>
+
+        <div class="user-menu-container">
+          {% if user.is_authenticated %}
+            <button class="btn-login" id="userMenuBtn" title="Menu do usuário" onclick="toggleDropdown(event)">
+              <i class="fas fa-user"></i>
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="user-greeting">
+                Olá, {{ user.first_name|default:user.username|truncatechars:20 }}!
+              </div>
+              <a href="{% url 'learning_logs:meus_orcamentos' %}">
+                <i class="fas fa-file-alt"></i>
+                Meus Orçamentos
+              </a>
+              <a href="{% url 'account_change_password' %}">
+                <i class="fas fa-lock"></i>
+                Alterar senha
+              </a>
+              {% if user.is_staff %}
+              <a href="{% url 'learning_logs:admin_dashboard' %}">
+                <i class="fas fa-chart-line"></i>
+                Painel Admin
+              </a>
+              {% endif %}
+              <div class="divider"></div>
+              <form method="post" action="{% url 'account_logout' %}" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit">
+                  <i class="fas fa-sign-out-alt"></i>
+                  Sair
+                </button>
+              </form>
+            </div>
+          {% else %}
+            <a href="{% url 'account_login' %}" class="btn-login" title="Login">
+              <i class="fas fa-user"></i>
+            </a>
+          {% endif %}
+        </div>
+
+        <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </nav>
     </header>
 
@@ -182,6 +419,48 @@
           if (!event.target.closest('.user-menu-container')) {
             dropdown.classList.remove('show');
           }
+        }
+      });
+
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navMenu = document.getElementById('navMenu');
+      const navBackdrop = document.getElementById('navBackdrop');
+
+      function closeMobileMenu() {
+        if (!navMenu || !menuToggle) return;
+        navMenu.classList.remove('open');
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        if (navBackdrop) navBackdrop.classList.remove('show');
+      }
+
+      if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', function () {
+          const isOpen = navMenu.classList.toggle('open');
+          menuToggle.classList.toggle('active', isOpen);
+          menuToggle.setAttribute('aria-expanded', String(isOpen));
+
+          if (navBackdrop) {
+            navBackdrop.classList.toggle('show', isOpen);
+          }
+        });
+
+        navMenu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            if (window.innerWidth <= 1100) {
+              closeMobileMenu();
+            }
+          });
+        });
+
+        if (navBackdrop) {
+          navBackdrop.addEventListener('click', closeMobileMenu);
+        }
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          closeMobileMenu();
         }
       });
     </script>

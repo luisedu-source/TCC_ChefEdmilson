@@ -400,19 +400,615 @@ body.admin-dashboard-page .logo-dark-link {
   padding-top: 49px;
 }
 
+@media (max-width: 1024px) {
+  .topo {
+    padding: 18px 24px;
+  }
+
+  .menu {
+    gap: 24px;
+  }
+
+  .menu a {
+    font-size: 16px;
+  }
+
+  .hero {
+    min-height: 90vh;
+  }
+
+  .conteudo h1 {
+    font-size: 44px;
+  }
+
+  .conteudo p {
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 900px) {
+  .topo {
+    padding: 12px 18px;
+    align-items: center;
+  }
+
+  .main-nav {
+    position: relative;
+  }
+
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    padding: 9px 8px;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+    z-index: 120;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 999px;
+  }
+
+  .topo.scrolled .menu-toggle {
+    border-color: rgba(0,0,0,0.2);
+    color: #111;
+  }
+
+  .menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: min(260px, 78vw);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    background: rgba(255,255,255,0.97);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 16px 28px rgba(0,0,0,0.12);
+    padding: 14px 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+  }
+
+  .menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .menu li {
+    width: 100%;
+  }
+
+  .menu a,
+  .topo.scrolled .menu a:not(.btndestaque),
+  body.sobre-page .menu a:not(.btndestaque),
+  body.login-page .menu a:not(.btndestaque),
+  body.cadastro-page .menu a:not(.btndestaque),
+  body.signup-page .menu a:not(.btndestaque),
+  body.admin-dashboard-page .menu a:not(.btndestaque),
+  body:has(.orcamento-container) .menu a:not(.btndestaque) {
+    color: #1b1b1b !important;
+    width: 100%;
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .menu a:hover {
+    background: #f5f1ea;
+  }
+
+  .btndestaque {
+    width: 100%;
+    text-align: center;
+  }
+
+  .logo {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .logo img {
+    width: 150px !important;
+    height: 150px !important;
+    top: -42px !important;
+  }
+
+  .hero-logo {
+    top: 18px;
+  }
+
+  .hero-logo img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .hero {
+    min-height: 88vh;
+    padding-top: 90px;
+  }
+
+  .conteudo h1 {
+    font-size: 38px;
+  }
+
+  .botoes-hero {
+    flex-direction: column;
+    gap: 16px;
+  }
+
   .sobre-page .sobre-grid {
     grid-template-columns: 1fr;
   }
+
   .sobre-page h1 {
     font-size: 40px;
   }
+
   .sobre-page .sobre-left {
     padding-right: 0;
   }
+
   .sobre-page .barra-bonita {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-container {
+    padding: 30px 22px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .orcamento-header h1 {
+    font-size: 40px;
+  }
+
+  .login-box {
+    padding: 32px 22px;
+    height: auto;
+  }
+
+  .no-account {
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topo {
+    padding: 12px 14px;
+  }
+
+  .logo {
+    width: 96px;
+    min-width: 96px;
+  }
+
+  .logo img {
+    width: 120px !important;
+    height: 120px !important;
+    top: -30px !important;
+  }
+
+  .menu-toggle {
+    width: 38px;
+    height: 38px;
+  }
+
+  .menu {
+    min-width: min(230px, 82vw);
+  }
+
+  .conteudo h1 {
+    font-size: 30px;
+  }
+
+  .conteudo p {
+    font-size: 16px;
+    padding: 0 18px;
+  }
+
+  .cards-container,
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-item:nth-child(odd),
+  .timeline-item:nth-child(even) {
+    padding-left: 52px;
+    padding-right: 0;
+    text-align: left;
+  }
+
+  .timeline::before,
+  .timeline-item::before {
+    left: 18px;
+  }
+
+  .timeline-content {
+    padding: 18px 16px;
+  }
+
+  .orcamento-header h1 {
+    font-size: 32px;
+  }
+
+  .progress-bar {
+    width: 220px;
+  }
+
+  .step-header h2 {
+    font-size: 22px;
+  }
+
+  .btn-submit,
+  .btn-proximo,
+  .btn-anterior {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 80px;
+  }
+
+  .hero-logo img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .login-wrapper {
+    margin-top: 90px;
+  }
+
+  .login-header-top h1 {
+    font-size: 28px;
+  }
+
+  .login-box {
+    padding: 28px 18px;
+  }
+
+  .btn-entrar,
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 14px;
+  }
+}
+/* ===== Base and global responsive improvements ===== */
+@media (max-width: 1024px) {
+  .topo {
+    padding: 18px 24px;
+  }
+
+  .menu {
+    gap: 24px;
+  }
+
+  .menu a {
+    font-size: 16px;
+  }
+
+  .hero {
+    min-height: 90vh;
+  }
+
+  .conteudo h1 {
+    font-size: 44px;
+  }
+
+  .conteudo p {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 900px) {
+  .topo {
+    padding: 12px 18px;
+    align-items: center;
+  }
+
+  .main-nav {
+    position: relative;
+  }
+
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    padding: 9px 8px;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+    z-index: 120;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 999px;
+  }
+
+  .topo.scrolled .menu-toggle {
+    border-color: rgba(0,0,0,0.2);
+    color: #111;
+  }
+
+  .menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: min(260px, 78vw);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    background: rgba(255,255,255,0.97);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 16px 28px rgba(0,0,0,0.12);
+    padding: 14px 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+  }
+
+  .menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .menu li {
+    width: 100%;
+  }
+
+  .menu a,
+  .topo.scrolled .menu a:not(.btndestaque),
+  body.sobre-page .menu a:not(.btndestaque),
+  body.login-page .menu a:not(.btndestaque),
+  body.cadastro-page .menu a:not(.btndestaque),
+  body.signup-page .menu a:not(.btndestaque),
+  body.admin-dashboard-page .menu a:not(.btndestaque),
+  body:has(.orcamento-container) .menu a:not(.btndestaque) {
+    color: #1b1b1b !important;
+    width: 100%;
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+
+  .menu a:hover {
+    background: #f5f1ea;
+  }
+
+  .btndestaque {
+    width: 100%;
+    text-align: center;
+  }
+
+  .logo {
+    width: 120px;
+    min-width: 120px;
+  }
+
+  .logo img {
+    width: 150px !important;
+    height: 150px !important;
+    top: -42px !important;
+  }
+
+  .hero-logo {
+    top: 18px;
+  }
+
+  .hero-logo img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .hero {
+    min-height: 88vh;
+    padding-top: 90px;
+  }
+
+  .conteudo h1 {
+    font-size: 38px;
+  }
+
+  .botoes-hero {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sobre-page .sobre-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sobre-page h1 {
+    font-size: 40px;
+  }
+
+  .sobre-page .sobre-left {
+    padding-right: 0;
+  }
+
+  .sobre-page .barra-bonita {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-container {
+    padding: 30px 22px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .orcamento-header h1 {
+    font-size: 40px;
+  }
+
+  .login-box {
+    padding: 32px 22px;
+    height: auto;
+  }
+
+  .no-account {
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topo {
+    padding: 12px 14px;
+  }
+
+  .logo {
+    width: 96px;
+    min-width: 96px;
+  }
+
+  .logo img {
+    width: 120px !important;
+    height: 120px !important;
+    top: -30px !important;
+  }
+
+  .menu-toggle {
+    width: 38px;
+    height: 38px;
+  }
+
+  .menu {
+    min-width: min(230px, 82vw);
+  }
+
+  .conteudo h1 {
+    font-size: 30px;
+  }
+
+  .conteudo p {
+    font-size: 16px;
+    padding: 0 18px;
+  }
+
+  .cards-container,
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-item:nth-child(odd),
+  .timeline-item:nth-child(even) {
+    padding-left: 52px;
+    padding-right: 0;
+    text-align: left;
+  }
+
+  .timeline::before,
+  .timeline-item::before {
+    left: 18px;
+  }
+
+  .timeline-content {
+    padding: 18px 16px;
+  }
+
+  .orcamento-header h1 {
+    font-size: 32px;
+  }
+
+  .progress-bar {
+    width: 220px;
+  }
+
+  .step-header h2 {
+    font-size: 22px;
+  }
+
+  .btn-submit,
+  .btn-proximo,
+  .btn-anterior {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-top: 80px;
+  }
+
+  .hero-logo img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .login-wrapper {
+    margin-top: 90px;
+  }
+
+  .login-header-top h1 {
+    font-size: 28px;
+  }
+
+  .login-box {
+    padding: 28px 18px;
+  }
+
+  .btn-entrar,
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 14px;
   }
 }
 
