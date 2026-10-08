@@ -19,45 +19,59 @@
     <title>Chef Edmilson</title>
   </head>
   <body class="login-page">
+    <div class="nav-backdrop" id="navBackdrop"></div>
     <header class="topo">
-      <a href="{% url 'learning_logs:index' %}" class="logo-link" aria-label="Ir para a página inicial">
-        <div class="logo logo-dark">
-          <img src="{% static 'learning_logs/img/logo.png' %}" alt="Logo do site" />
-        </div>
-      </a>
-      <a href="{% url 'learning_logs:index' %}" class="logo-link" aria-label="Ir para a página inicial" style="display: none">
-        <div class="logo logo-light">
-          <img src="{% static 'learning_logs/img/logo-positiva.png' %}" alt="Logo do site" />
-        </div>
-      </a>
-      <nav>
-        <ul class="menu">
-          <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
-          <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
+      <div class="logo-wrapper">
+        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-dark-link" aria-label="Ir para a página inicial">
+          <div class="logo logo-dark">
+            <img src="{% static 'learning_logs/img/logo.png' %}" alt="Logo do site" />
+          </div>
+        </a>
+        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-light-link" aria-label="Ir para a página inicial">
+          <div class="logo logo-light">
+            <img src="{% static 'learning_logs/img/logo-positiva.png' %}" alt="Logo do site" />
+          </div>
+        </a>
+      </div>
+      <nav class="main-nav">
+        <ul class="menu" id="navMenu">
+          <li><a href="{% url 'learning_logs:index' %}"><i class="fas fa-house"></i> Início</a></li>
+          <li><a href="{% url 'learning_logs:sobre' %}"><i class="fas fa-circle-question"></i> Sobre</a></li>
           <li>
-            <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque">Solicitar Orçamento</a>
-          </li>
-          <li class="user-menu-container">
-            {% if user.is_authenticated %}
-              <button class="btn-login" id="userMenuBtn" onclick="toggleDropdown(event)" title="Menu">
-                <i class="fas fa-user"></i>
-              </button>
-              <div class="dropdown-menu" id="dropdownMenu">
-                <div class="user-greeting">Olá, {{ user.username }}!</div>
-                <form method="post" action="{% url 'account_logout' %}" style="margin: 0;">
-                  {% csrf_token %}
-                  <button type="submit" style="width: 100%; text-align: left; padding: 12px 16px; border: none; background: none; color: #d32f2f; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i> Sair
-                  </button>
-                </form>
-              </div>
-            {% else %}
-              <a href="{% url 'account_login' %}" class="btn-login" title="Login">
-                <i class="fas fa-user"></i>
-              </a>
-            {% endif %}
+            <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque"><i class="fas fa-file-signature"></i> Solicitar Orçamento</a>
           </li>
         </ul>
+
+        <div class="user-menu-container">
+          {% if user.is_authenticated %}
+            <button class="btn-login" id="userMenuBtn" title="Menu do usuário" onclick="toggleDropdown(event)">
+              <i class="fas fa-user"></i>
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <div class="user-greeting">Olá, {{ user.first_name|default:user.username|truncatechars:20 }}!</div>
+              <a href="{% url 'learning_logs:meus_orcamentos' %}"><i class="fas fa-file-alt"></i> Meus Orçamentos</a>
+              <a href="{% url 'account_change_password' %}"><i class="fas fa-lock"></i> Alterar senha</a>
+              {% if user.is_staff %}
+                <a href="{% url 'learning_logs:admin_dashboard' %}"><i class="fas fa-chart-line"></i> Painel Admin</a>
+              {% endif %}
+              <div class="divider"></div>
+              <form method="post" action="{% url 'account_logout' %}" style="margin: 0; width: 100%;">
+                {% csrf_token %}
+                <button type="submit"><i class="fas fa-sign-out-alt"></i> Sair</button>
+              </form>
+            </div>
+          {% else %}
+            <a href="{% url 'account_login' %}" class="btn-login" title="Login">
+              <i class="fas fa-user"></i>
+            </a>
+          {% endif %}
+        </div>
+
+        <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </nav>
     </header>
 
@@ -143,12 +157,55 @@
     <script>
       function toggleDropdown(event) {
         event.stopPropagation();
-        document.getElementById('dropdownMenu').classList.toggle('show');
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown) dropdown.classList.toggle('show');
       }
-      document.addEventListener('click', function(e) {
-        const menu = document.getElementById('dropdownMenu');
-        if (menu && !e.target.closest('.user-menu-container')) {
-          menu.classList.remove('show');
+
+      document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('dropdownMenu');
+        const userMenuBtn = document.getElementById('userMenuBtn');
+
+        if (dropdown && userMenuBtn && !event.target.closest('.user-menu-container')) {
+          dropdown.classList.remove('show');
+        }
+      });
+
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navMenu = document.getElementById('navMenu');
+      const navBackdrop = document.getElementById('navBackdrop');
+
+      function closeMobileMenu() {
+        if (!navMenu || !menuToggle) return;
+        navMenu.classList.remove('open');
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        if (navBackdrop) navBackdrop.classList.remove('show');
+      }
+
+      if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', function () {
+          const isOpen = navMenu.classList.toggle('open');
+          menuToggle.classList.toggle('active', isOpen);
+          menuToggle.setAttribute('aria-expanded', String(isOpen));
+          if (navBackdrop) navBackdrop.classList.toggle('show', isOpen);
+        });
+
+        navMenu.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', function () {
+            if (window.innerWidth <= 1100) {
+              closeMobileMenu();
+            }
+          });
+        });
+      }
+
+      if (navBackdrop) {
+        navBackdrop.addEventListener('click', closeMobileMenu);
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          closeMobileMenu();
         }
       });
     </script>

@@ -84,6 +84,22 @@ html {
   font-size: 18px;
   transition: all 0.3s ease;
   background-color: rgba(210, 170, 119, 0.2);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-login:link,
+.btn-login:visited,
+.btn-login:active,
+.btn-login:focus,
+.btn-login:hover {
+  color: white !important;
+  text-decoration: none;
+}
+
+.btn-login i,
+.btn-login svg {
+  color: inherit;
 }
 
 .btn-login:hover {
