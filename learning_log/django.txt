@@ -1,0 +1,18 @@
+_
+inica a maquina virtual e inicia o banco de dados
+python -m venv ll_env
+. ll_env\scripts\activate
+pip install Django
+django-admin startproject learning_log .
+. code 
+python .\manage.py migrate
+python .\manage.py runserver
+
+cria nova aplicaçao: python .\manage.py startapp learning_logs
+
+recarrga o banco e cria os topicos : python .\manage.py makemigrations learning_logs
+python .\manage.py migrate
+
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+pip install django-allauth

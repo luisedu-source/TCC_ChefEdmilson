@@ -6,10 +6,10 @@ admin.site.register(Entry)
 
 @admin.register(Orcamento)
 class OrcamentoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'email', 'tipo_evento', 'data_evento', 'status', 'data_criacao')
+    list_display = ('protocolo', 'nome', 'email', 'tipo_evento', 'data_evento', 'status', 'data_criacao')
     list_filter = ('status', 'tipo_evento', 'data_criacao')
-    search_fields = ('nome', 'email', 'telefone')
-    readonly_fields = ('data_criacao', 'data_atualizacao')
+    search_fields = ('nome', 'email', 'telefone', 'protocolo')
+    readonly_fields = ('protocolo', 'data_criacao', 'data_atualizacao')
     fieldsets = (
         ('Informações Básicas', {
             'fields': ('nome', 'email', 'telefone', 'convidados')
@@ -21,6 +21,6 @@ class OrcamentoAdmin(admin.ModelAdmin):
             'fields': ('rua', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep')
         }),
         ('Controle', {
-            'fields': ('status', 'data_criacao', 'data_atualizacao')
+            'fields': ('protocolo', 'status', 'data_criacao', 'data_atualizacao')
         }),
     )

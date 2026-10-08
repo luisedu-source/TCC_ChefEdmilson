@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
+from django.utils import timezone
 
 class Topic(models.Model):
     """Um assunto sobre qual o usuario esta aprendendo"""
@@ -66,6 +68,7 @@ class Orcamento(models.Model):
     cep = models.CharField(max_length=10)
     
     # Controle
+    protocolo = models.CharField(max_length=20, unique=True, blank=True, null=True, db_index=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     data_criacao = models.DateTimeField(auto_now_add=True)
     data_atualizacao = models.DateTimeField(auto_now=True)
@@ -74,5 +77,15 @@ class Orcamento(models.Model):
         ordering = ['-data_criacao']
         verbose_name_plural = 'Orçamentos'
     
+    def save(self, *args, **kwargs):
+        """Gera automaticamente o protocolo se não existir"""
+        if not self.protocolo:
+            # Formato: ORC-20261008-XXXX (onde X são dígitos aleatórios/ID)
+            data_str = timezone.now().strftime('%Y%m%d')
+            # Usar UUID curto (primeiros 8 caracteres) para garantir unicidade
+            uuid_short = str(uuid.uuid4()).split('-')[0].upper()
+            self.protocolo = f"ORC-{data_str}-{uuid_short}"
+        super().save(*args, **kwargs)
+    
     def __str__(self):
-        return f"{self.nome} - {self.tipo_evento} ({self.status})"
+        return f"{self.protocolo} - {self.nome} - {self.tipo_evento} ({self.status})"
