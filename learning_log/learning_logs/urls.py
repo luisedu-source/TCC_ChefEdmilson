@@ -6,6 +6,7 @@ app_name = 'learning_logs'
 urlpatterns = [
     path('', views.index, name='index'),
     path('sobre/', views.sobre, name='sobre'),
+    path('politica-de-privacidade/', views.politica_privacidade, name='politica_privacidade'),
     path('orcamento/', views.orcamento, name='orcamento'),
     path('orcamento/submit/', views.orcamento_submit, name='orcamento_submit'),
     path('meus-orcamentos/', views.meus_orcamentos, name='meus_orcamentos'),

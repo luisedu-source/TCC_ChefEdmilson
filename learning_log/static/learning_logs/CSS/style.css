@@ -2372,3 +2372,24 @@ body.signup-page .btn-login:hover i {
 .dropdown-menu button:hover {
   background-color: #f9f9f9;
 }
+
+.logo-dark-link img,
+.logo-light-link img,
+.topo .logo-link img,
+body.privacy-page .logo-link img {
+  filter: brightness(0) saturate(100%) !important;
+  -webkit-filter: brightness(0) saturate(100%) !important;
+  opacity: 1 !important;
+}
+
+body.privacy-page .logo-light-link {
+  display: none !important;
+}
+
+body.privacy-page .logo-dark-link {
+  display: inline-flex !important;
+}
+
+.topo .logo-link {
+  display: inline-flex !important;
+}

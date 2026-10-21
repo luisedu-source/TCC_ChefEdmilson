@@ -17,6 +17,11 @@ def sobre(request):
     return render(request, 'learning_logs/sobre.html')
 
 
+def politica_privacidade(request):
+    """Página de política de privacidade"""
+    return render(request, 'learning_logs/politica_privacidade.html')
+
+
 def orcamento(request):
     """Página de orçamento"""
     return render(request, 'learning_logs/orcamento.html')

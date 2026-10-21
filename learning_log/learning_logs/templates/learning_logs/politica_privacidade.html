@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chef Edmilson - Política de Privacidade{% endblock %}
+{% block body_class %}privacy-page{% endblock %}
+
+{% block content %}
+<style>
+  .privacy-page {
+    background: linear-gradient(180deg, #f7f3ee 0%, #f3efe9 100%);
+  }
+
+  .privacy-wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 180px 24px 80px;
+    color: #1d1d1d;
+  }
+
+  .privacy-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(186, 152, 110, 0.18);
+    border-radius: 26px;
+    box-shadow: 0 24px 60px rgba(35, 26, 20, 0.08);
+    padding: 42px 32px;
+  }
+
+  .privacy-card h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-family: "Arapey", Georgia, serif;
+    color: #201911;
+    margin-bottom: 18px;
+  }
+
+  .privacy-card .eyebrow {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #f3e5d0;
+    color: #805b31;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .privacy-card p,
+  .privacy-card li {
+    color: #3f3a36;
+    font-size: 1.04rem;
+    line-height: 1.8;
+  }
+
+  .privacy-card ul {
+    margin: 18px 0 18px 18px;
+  }
+
+  .privacy-card section {
+    margin-top: 28px;
+  }
+
+  .privacy-card h2 {
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+    color: #1d1d1d;
+  }
+
+  .privacy-card strong {
+    color: #1a1a1a;
+  }
+
+  @media (max-width: 768px) {
+    .privacy-wrap {
+      padding-top: 140px;
+    }
+
+    .privacy-card {
+      padding: 28px 18px;
+    }
+  }
+</style>
+
+<div class="privacy-wrap">
+  <div class="privacy-card">
+    <span class="eyebrow">Privacidade</span>
+    <h1>Política de Privacidade</h1>
+
+    <p>Esta Política de Privacidade descreve como o site <strong>Chef Edmilson</strong> coleta, usa, armazena e protege as informações pessoais dos usuários, em conformidade com a Lei Geral de Proteção de Dados (LGPD).</p>
+
+    <section>
+      <h2>1. Informações que coletamos</h2>
+      <p>Podemos coletar os seguintes dados:</p>
+      <ul>
+        <li>Nome e sobrenome;</li>
+        <li>E-mail;</li>
+        <li>Telefone;</li>
+        <li>Dados de evento e orçamento solicitados;</li>
+        <li>Endereço e CEP, quando necessário para atendimento do pedido;</li>
+        <li>Dados de login e autenticação, quando o usuário acessa áreas restritas;</li>
+        <li>Informações de navegação e uso do site por meio de cookies e tecnologias similares.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. Finalidade da coleta</h2>
+      <p>Utilizamos os dados coletados para:</p>
+      <ul>
+        <li>Responder solicitações de orçamento e contato;</li>
+        <li>Gerenciar cadastros e autenticação de usuários;</li>
+        <li>Melhorar a experiência de navegação no site;</li>
+        <li>Enviar comunicações relacionadas ao serviço solicitado;</li>
+        <li>Manter a segurança e a integridade do sistema;</li>
+        <li>Atender obrigações legais e regulatórias.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. Uso de cookies</h2>
+      <p>O site utiliza cookies essenciais para seu funcionamento e, quando consentido, cookies de análise e personalização. Os cookies ajudam a lembrar suas preferências, manter sessões ativas e entender melhor a navegação para melhorar os serviços oferecidos.</p>
+      <p>Você pode aceitar, recusar ou personalizar o uso de cookies a qualquer momento por meio do aviso de consentimento exibido no site.</p>
+    </section>
+
+    <section>
+      <h2>4. Compartilhamento de dados</h2>
+      <p>Os dados pessoais coletados podem ser compartilhados apenas quando necessário para:</p>
+      <ul>
+        <li>Prestação de serviços e atendimento ao cliente;</li>
+        <li>Atendimento a obrigações legais;</li>
+        <li>Segurança da plataforma e prevenção de fraudes;</li>
+        <li>Integrações técnicas autorizadas pelo usuário.</li>
+      </ul>
+      <p>Não comercializamos seus dados pessoais e não os compartilhamos para fins de marketing sem seu consentimento explícito.</p>
+    </section>
+
+    <section>
+      <h2>5. Armazenamento e segurança</h2>
+      <p>Os dados são armazenados em ambiente seguro e protegidos por medidas técnicas e administrativas adequadas para evitar acesso não autorizado, uso indevido ou perda de informações.</p>
+    </section>
+
+    <section>
+      <h2>6. Direitos do titular</h2>
+      <p>De acordo com a LGPD, você pode solicitar, a qualquer momento:</p>
+      <ul>
+        <li>Confirmação da existência de tratamento;</li>
+        <li>Acesso aos seus dados pessoais;</li>
+        <li>Correção de informações incompletas ou incorretas;</li>
+        <li>Exclusão de dados, quando aplicável;</li>
+        <li>Revogação do consentimento;</li>
+        <li>Portabilidade dos dados.</li>
+      </ul>
+      <p>Para exercer seus direitos, entre em contato conosco através do canal de atendimento do site.</p>
+    </section>
+
+    <section>
+      <h2>7. Atualização da política</h2>
+      <p>Esta política pode ser atualizada periodicamente para refletir mudanças em serviços, leis ou práticas de segurança. A versão mais recente será sempre disponibilizada nesta página.</p>
+    </section>
+
+    <section>
+      <h2>8. Contato</h2>
+      <p>Para dúvidas sobre esta Política de Privacidade ou sobre o uso de seus dados, entre em contato com o responsável pelo site e pelos serviços de atendimento.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}
