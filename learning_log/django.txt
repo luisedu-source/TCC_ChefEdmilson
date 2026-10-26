@@ -16,3 +16,8 @@ python .\manage.py migrate
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 pip install django-allauth
+
+Configuração para produção:
+- Defina DJANGO_DEBUG=False, DJANGO_SECRET_KEY e DJANGO_ALLOWED_HOSTS no ambiente.
+- Configure DJANGO_SECURE_SSL_REDIRECT=True somente após configurar HTTPS no servidor/proxy.
+- Configure DJANGO_SECURE_HSTS_SECONDS somente depois de confirmar HTTPS em todos os domínios.

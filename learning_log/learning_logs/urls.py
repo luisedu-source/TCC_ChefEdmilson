@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 from . import views
 
 app_name = 'learning_logs'
@@ -14,5 +14,4 @@ urlpatterns = [
     path('cadastro/', views.cadastro, name='cadastro'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('api/orcamentos/<int:id>/', views.orcamento_update_status, name='orcamento_update_status'),
-    path('accounts/', include('allauth.urls')),
 ]

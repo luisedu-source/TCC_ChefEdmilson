@@ -12,10 +12,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=The+Seasons&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'learning_logs/CSS/style.css' %}?v=2" />
+    <link rel="stylesheet" href="{% static 'learning_logs/CSS/style.css' %}?v=5" />
     <style>
       .user-menu-container {
         position: relative;
@@ -678,7 +675,7 @@
 
         <div class="user-menu-container">
           {% if user.is_authenticated %}
-            <button class="btn-login" id="userMenuBtn" title="Menu do usuário" onclick="toggleDropdown(event)">
+            <button class="btn-login" id="userMenuBtn" title="Menu do usuário" aria-expanded="false" aria-controls="dropdownMenu" onclick="toggleDropdown(event)">
               <i class="fas fa-user"></i>
             </button>
             <div class="dropdown-menu" id="dropdownMenu">
@@ -872,27 +869,11 @@
         }
       }
 
-      function toggleDropdown(event) {
-        event.stopPropagation();
-        const dropdown = document.getElementById('dropdownMenu');
-        dropdown.classList.toggle('show');
-      }
-
-      // Fechar dropdown ao clicar fora
-      document.addEventListener('click', function (event) {
-        const dropdown = document.getElementById('dropdownMenu');
-        const userMenuBtn = document.getElementById('userMenuBtn');
-        
-        if (dropdown && userMenuBtn) {
-          if (!event.target.closest('.user-menu-container')) {
-            dropdown.classList.remove('show');
-          }
-        }
-      });
-
       const menuToggle = document.querySelector('.menu-toggle');
       const navMenu = document.getElementById('navMenu');
       const navBackdrop = document.getElementById('navBackdrop');
+      const dropdown = document.getElementById('dropdownMenu');
+      const userMenuBtn = document.getElementById('userMenuBtn');
 
       function closeMobileMenu() {
         if (!navMenu || !menuToggle) return;
@@ -902,9 +883,41 @@
         if (navBackdrop) navBackdrop.classList.remove('show');
       }
 
+      function closeDropdown() {
+        if (!dropdown || !userMenuBtn) return;
+        dropdown.classList.remove('show');
+        userMenuBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleDropdown(event) {
+        event.stopPropagation();
+        if (!dropdown || !userMenuBtn) return;
+
+        const isOpen = dropdown.classList.contains('show');
+        if (!isOpen && window.innerWidth <= 1100) {
+          closeMobileMenu();
+        }
+
+        dropdown.classList.toggle('show', !isOpen);
+        userMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+      }
+
+      document.addEventListener('click', function (event) {
+        if (
+          dropdown &&
+          userMenuBtn &&
+          !event.target.closest('.user-menu-container')
+        ) {
+          closeDropdown();
+        }
+      });
+
       if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', function () {
           const isOpen = navMenu.classList.toggle('open');
+          if (isOpen && window.innerWidth <= 1100) {
+            closeDropdown();
+          }
           menuToggle.classList.toggle('active', isOpen);
           menuToggle.setAttribute('aria-expanded', String(isOpen));
 
@@ -929,6 +942,7 @@
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
           closeMobileMenu();
+          closeDropdown();
           hideCookieModal();
         }
       });

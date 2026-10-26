@@ -1,14 +1,8 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=The+Seasons&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-  <title>Meus Orçamentos - Chef Edmilson</title>
+{% extends 'base.html' %}
+
+{% block title %}Meus Orçamentos - Chef Edmilson{% endblock %}
+{% block body_class %}{% endblock %}
+{% block content %}
   <style>
     * { box-sizing: border-box; }
 
@@ -23,133 +17,6 @@
 
     body {
       background-color: #f5f5f5;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    .topo {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 50px;
-      background-color: rgba(0, 0, 0, 0);
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 180px;
-      height: 70px;
-      min-width: 180px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .logo img {
-      width: 220px;
-      height: 220px;
-      max-width: none;
-      position: absolute;
-      left: 50%;
-      top: -70px;
-      transform: translateX(-50%);
-      object-fit: contain;
-    }
-
-    .logo-dark,
-    .logo-light {
-      display: block;
-      font-family: "Arapey", serif;
-      font-size: 28px;
-      color: #1a1a1a;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      text-transform: none;
-      font-style: italic;
-    }
-
-    .logo-light {
-      display: none;
-      color: #fff;
-    }
-
-    .logo-dark-link {
-      display: none !important;
-    }
-
-    .logo-light-link {
-      display: inline-flex !important;
-    }
-
-    .logo span {
-      display: block;
-      font-family: "Arapey", serif;
-      font-style: italic;
-      font-size: 18px;
-      line-height: 1.1;
-    }
-
-    .menu {
-      list-style: none;
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      margin: 0;
-      padding: 0;
-    }
-
-    .menu a {
-      color: #1a1a1a;
-      font-size: 18px;
-      transition: 0.3s;
-    }
-
-    .menu a:hover {
-      color: #d2aa77;
-    }
-
-    .btndestaque {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #c79c6b, #ddba88);
-      color: white !important;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      min-width: 150px;
-    }
-
-    .btn-login {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: rgba(210, 170, 119, 0.2);
-      color: #1a1a1a;
-      transition: all 0.3s ease;
-    }
-
-    .btn-login:hover {
-      background-color: #d2aa77;
-      color: white !important;
-      transform: scale(1.1);
-    }
-
-    .menu li {
-      display: flex;
-      align-items: center;
     }
 
     .orcamento-container {
@@ -555,18 +422,6 @@
     }
 
     @media (max-width: 700px) {
-      .topo {
-        padding: 18px 20px;
-      }
-
-      .menu {
-        gap: 14px;
-      }
-
-      .menu a {
-        font-size: 14px;
-      }
-
       .orcamento-header h1 {
         font-size: 36px;
       }
@@ -576,7 +431,7 @@
         align-items: flex-start;
       }
 
-      .ordamento-item .btn-ver {
+      .orcamento-item .btn-ver {
         width: 100%;
       }
 
@@ -586,36 +441,6 @@
       }
     }
   </style>
-</head>
-<body>
-  <header class="topo">
-      <div class="logo-wrapper">
-        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-dark-link" aria-label="Ir para a página inicial">
-          <div class="logo logo-dark">
-            <img src="{% static 'learning_logs/img/logo.png' %}" alt="Logo do site" />
-          </div>
-        </a>
-        <a href="{% url 'learning_logs:index' %}" class="logo-link logo-light-link" aria-label="Ir para a página inicial">
-          <div class="logo logo-light">
-            <img src="{% static 'learning_logs/img/logo-positiva.png' %}" alt="Logo do site" />
-          </div>
-        </a>
-      </div>
-      <nav>
-      <ul class="menu">
-        <li><a href="{% url 'learning_logs:index' %}">Início</a></li>
-        <li><a href="{% url 'learning_logs:sobre' %}">Sobre</a></li>
-        <li>
-          <a href="{% url 'learning_logs:orcamento' %}" class="btndestaque">Solicitar Orçamento</a>
-        </li>
-        <li class="user-menu-container">
-          <a href="{% url 'account_login' %}" class="btn-login" title="Login">
-            <i class="fas fa-user"></i>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </header>
 
   <main class="orcamento-container">
     <div class="orcamento-header">
@@ -675,7 +500,7 @@
         <div class="footer-contact">
           <div class="contact-item">
             <i class="fas fa-phone-alt"></i>
-            <a href="https://wa.me/5515997897875" target="_blank">(15) 99789-7875</a>
+            <a href="https://wa.me/5515997897875" target="_blank" rel="noopener noreferrer">(15) 99789-7875</a>
           </div>
           <div class="contact-item">
             <i class="fas fa-map-marker-alt"></i>
@@ -683,7 +508,7 @@
           </div>
           <div class="contact-item">
             <i class="fab fa-instagram"></i>
-            <a href="https://instagram.com/chef_edmilson" target="_blank">@chef_edmilson</a>
+            <a href="https://instagram.com/chef_edmilson" target="_blank" rel="noopener noreferrer">@chef_edmilson</a>
           </div>
         </div>
       </div>
@@ -691,7 +516,7 @@
 
     <div class="footer-bottom">
       <p>© 2026 Chef Edmilson. Todos os direitos reservados.</p>
-      <a href="#">Política de Privacidade</a>
+      <a href="{% url 'learning_logs:politica_privacidade' %}">Política de Privacidade</a>
     </div>
   </footer>
 
@@ -777,15 +602,35 @@
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${mensagem}`;
     }
 
+    function escapeHtml(value) {
+      const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+      return String(value == null ? '' : value).replace(/[&<>"']/g, character => entities[character]);
+    }
+
+    function capitalize(value) {
+      const text = String(value || '');
+      return text ? text.charAt(0).toUpperCase() + text.slice(1) : '—';
+    }
+
     async function fetchOrcamentos() {
       try {
         const response = await fetch('{% url "learning_logs:meus_orcamentos_api" %}');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
+        if (!Array.isArray(data.orcamentos)) throw new Error('Resposta inválida da API');
         orcamentos = data.orcamentos;
         renderOrcamentos();
         updateStats();
       } catch (error) {
         console.error('Erro ao buscar orçamentos:', error);
+        document.getElementById('orcamentosList').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-triangle-exclamation"></i>
+            <h2>Não foi possível carregar seus orçamentos</h2>
+            <p>Verifique sua conexão e tente novamente.</p>
+            <button type="button" class="btn-novo-orcamento" onclick="fetchOrcamentos()">Tentar novamente</button>
+          </div>
+        `;
       }
     }
 
@@ -819,10 +664,10 @@
         return `
           <div class="orcamento-item">
             <div class="orcamento-info">
-              <h3>${o.nome}</h3>
-              <p class="evento">${o.tipo_evento.charAt(0).toUpperCase() + o.tipo_evento.slice(1)}</p>
-              <p><strong>Data:</strong> ${formatDate(o.data_evento)}</p>
-              <p><strong>Convidados:</strong> ${o.convidados}</p>
+              <h3>${escapeHtml(o.nome)}</h3>
+              <p class="evento">${escapeHtml(capitalize(o.tipo_evento))}</p>
+              <p><strong>Data:</strong> ${escapeHtml(formatDate(o.data_evento))}</p>
+              <p><strong>Convidados:</strong> ${escapeHtml(o.convidados)}</p>
               ${whatsappButton}
             </div>
             <div>${getStatusBadge(o.status)}</div>
@@ -871,5 +716,4 @@
     fetchOrcamentos();
     setInterval(fetchOrcamentos, pollingInterval);
   </script>
-</body>
-</html>
+{% endblock %}

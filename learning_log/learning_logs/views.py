@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Q
 import json
+from .forms import OrcamentoPublicForm
 from .models import Orcamento
 
 
@@ -37,43 +38,61 @@ def orcamento_submit(request):
     """Recebe dados do formulário de orçamento via AJAX"""
     try:
         data = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
 
-        # Validação mínima dos campos obrigatórios
-        campos_obrigatorios = ['nome', 'telefone', 'convidados',
-                               'tipoEvento', 'dataEvento', 'rua', 'numero',
-                               'bairro', 'cidade', 'estado', 'cep']
-        for campo in campos_obrigatorios:
-            if not data.get(campo):
-                return JsonResponse(
-                    {'success': False, 'error': f'Campo obrigatório ausente: {campo}'},
-                    status=400
-                )
+    if not isinstance(data, dict):
+        return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
 
-        orcamento = Orcamento.objects.create(
-            user=request.user if request.user.is_authenticated else None,
-            nome=data.get('nome', ''),
-            email='',
-            telefone=data.get('telefone', ''),
-            convidados=int(data.get('convidados', 0)),
-            tipo_evento=data.get('tipoEvento', ''),
-            data_evento=data.get('dataEvento', ''),
-            restricoes=','.join(data.get('restricoes', [])),
-            mensagem=data.get('mensagem', ''),
-            rua=data.get('rua', ''),
-            numero=data.get('numero', ''),
-            complemento=data.get('complemento', ''),
-            bairro=data.get('bairro', ''),
-            cidade=data.get('cidade', ''),
-            estado=data.get('estado', ''),
-            cep=data.get('cep', ''),
+    restricoes = data.get('restricoes', [])
+    restricoes_validas = {'vegetariano', 'vegano', 'semlactose', 'alergia'}
+    if (
+        not isinstance(restricoes, list)
+        or any(not isinstance(item, str) or item not in restricoes_validas for item in restricoes)
+    ):
+        return JsonResponse({'success': False, 'error': 'Restrições alimentares inválidas.'}, status=400)
+
+    campos_texto = (
+        'nome', 'telefone', 'tipoEvento', 'dataEvento', 'mensagem', 'rua',
+        'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep',
+    )
+    if any(data.get(campo) is not None and not isinstance(data.get(campo), str) for campo in campos_texto):
+        return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
+    convidados = data.get('convidados')
+    if isinstance(convidados, bool) or not isinstance(convidados, (int, str)):
+        return JsonResponse({'success': False, 'error': 'Número de convidados inválido.'}, status=400)
+
+    form_data = {
+        'nome': data.get('nome'),
+        'telefone': data.get('telefone'),
+        'convidados': data.get('convidados'),
+        'tipo_evento': data.get('tipoEvento'),
+        'data_evento': data.get('dataEvento'),
+        'restricoes': ','.join(restricoes),
+        'mensagem': data.get('mensagem', ''),
+        'rua': data.get('rua'),
+        'numero': data.get('numero'),
+        'complemento': data.get('complemento', ''),
+        'bairro': data.get('bairro'),
+        'cidade': data.get('cidade'),
+        'estado': data.get('estado'),
+        'cep': data.get('cep'),
+    }
+    form = OrcamentoPublicForm(form_data)
+    if not form.is_valid():
+        return JsonResponse(
+            {'success': False, 'error': 'Verifique os dados informados.', 'errors': form.errors.get_json_data()},
+            status=400,
         )
 
-        return JsonResponse({'success': True, 'message': 'Orçamento enviado com sucesso!'})
-
-    except (ValueError, TypeError) as e:
-        return JsonResponse({'success': False, 'error': 'Número de convidados inválido.'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    orcamento = form.save(commit=False)
+    if request.user.is_authenticated:
+        orcamento.user = request.user
+    orcamento.save()
+    return JsonResponse(
+        {'success': True, 'message': 'Orçamento enviado com sucesso!'},
+        status=201,
+    )
 
 
 def is_admin(user):
@@ -99,10 +118,8 @@ def admin_dashboard(request):
             o_dict['data_evento'] = str(o_dict['data_evento'])  # "YYYY-MM-DD"
         orcamentos_list.append(o_dict)
 
-    orcamentos_json = json.dumps(orcamentos_list)
-
     return render(request, 'learning_logs/admin_dashboard_chef_edmilson.html', {
-        'orcamentos_json': orcamentos_json,
+        'orcamentos_list': orcamentos_list,
     })
 
 
@@ -113,27 +130,21 @@ def orcamento_update_status(request, id):
     """Atualiza o status de um orçamento"""
     try:
         data = json.loads(request.body)
-        novo_status = data.get('status', '')
-
-        STATUS_VALIDOS = ['pendente', 'respondido', 'recusado']
-        if novo_status not in STATUS_VALIDOS:
-            return JsonResponse(
-                {'success': False, 'error': f'Status inválido. Use: {", ".join(STATUS_VALIDOS)}'},
-                status=400
-            )
-
-        orcamento = Orcamento.objects.get(id=id)
-        orcamento.status = novo_status
-        orcamento.save()
-
-        return JsonResponse({'success': True, 'message': 'Status atualizado'})
-
-    except Orcamento.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Orçamento não encontrado'}, status=404)
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    if not isinstance(data, dict):
+        return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
+
+    novo_status = data.get('status')
+    status_validos = {status for status, _ in Orcamento.STATUS_CHOICES}
+    if not isinstance(novo_status, str) or novo_status not in status_validos:
+        return JsonResponse({'success': False, 'error': 'Status inválido.'}, status=400)
+
+    orcamento = get_object_or_404(Orcamento, id=id)
+    orcamento.status = novo_status
+    orcamento.save(update_fields=['status', 'data_atualizacao'])
+    return JsonResponse({'success': True, 'message': 'Status atualizado'})
 
 
 @login_required
