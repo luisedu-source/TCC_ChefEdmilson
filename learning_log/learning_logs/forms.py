@@ -31,9 +31,11 @@ class OrcamentoPublicForm(forms.ModelForm):
 
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
-        if len(re.sub(r'\D', '', telefone)) not in (10, 11):
+        digitos = re.sub(r'\D', '', telefone)
+        if len(digitos) not in (10, 11):
             raise forms.ValidationError('Informe um telefone com DDD válido.')
-        return telefone
+        tamanho_numero = 5 if len(digitos) == 11 else 4
+        return f'({digitos[:2]}) {digitos[2:2 + tamanho_numero]}-{digitos[2 + tamanho_numero:]}'
 
     def clean_estado(self):
         return self.cleaned_data['estado'].strip().upper()

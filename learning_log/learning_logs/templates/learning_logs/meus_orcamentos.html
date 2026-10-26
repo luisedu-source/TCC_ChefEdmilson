@@ -156,6 +156,8 @@
     }
 
     .btn-ver,
+    .btn-manage,
+    .btn-delete,
     .btn-whatsapp,
     .btn-voltar,
     .btn-novo-orcamento {
@@ -179,6 +181,25 @@
     .btn-ver:hover {
       background: #8b6914;
     }
+
+    .orcamento-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-manage,
+    .btn-delete {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: white;
+    }
+
+    .btn-manage { background: #4b6477; }
+    .btn-manage:hover { background: #354a5a; }
+    .btn-delete { background: #b84a4a; }
+    .btn-delete:hover { background: #963838; }
 
     .btn-whatsapp {
       background: #25d366;
@@ -309,6 +330,60 @@
       background: #8b6914;
     }
 
+    .edit-modal {
+      max-width: 760px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+
+    .edit-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .edit-form .edit-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .edit-form .edit-field.full-width,
+    .edit-form .edit-restrictions,
+    .edit-form .edit-actions {
+      grid-column: 1 / -1;
+    }
+
+    .edit-form label {
+      color: #666;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .edit-form input,
+    .edit-form select,
+    .edit-form textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font: inherit;
+    }
+
+    .edit-form textarea { resize: vertical; }
+    .edit-restrictions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .edit-restrictions label { display: inline-flex; align-items: center; gap: 6px; }
+    .edit-restrictions input { width: auto; }
+    .edit-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .edit-actions button { flex: 1; }
+
+    @media (max-width: 560px) {
+      .edit-form { grid-template-columns: 1fr; }
+      .edit-form .edit-field.full-width,
+      .edit-form .edit-restrictions,
+      .edit-form .edit-actions { grid-column: 1; }
+    }
+
     .footer {
       background: #0d1d2f;
       color: white;
@@ -431,7 +506,12 @@
         align-items: flex-start;
       }
 
-      .orcamento-item .btn-ver {
+      .orcamento-actions {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .orcamento-actions button {
         width: 100%;
       }
 
@@ -556,10 +636,94 @@
     </div>
   </div>
 
+  <div class="modal-bg" id="editModalBg" onclick="closeEditModal(event)">
+    <div class="modal edit-modal">
+      <h2>Editar Orçamento</h2>
+      <form class="edit-form" id="editForm">
+        {% csrf_token %}
+        <input type="hidden" id="editId">
+        <div class="edit-field">
+          <label for="editNome">Nome completo</label>
+          <input id="editNome" type="text" required>
+        </div>
+        <div class="edit-field">
+          <label for="editTelefone">Telefone</label>
+          <input id="editTelefone" type="tel" maxlength="15" inputmode="tel" required>
+        </div>
+        <div class="edit-field">
+          <label for="editConvidados">Número de convidados</label>
+          <input id="editConvidados" type="number" min="1" required>
+        </div>
+        <div class="edit-field">
+          <label for="editTipoEvento">Tipo de evento</label>
+          <select id="editTipoEvento" required>
+            <option value="casamento">Casamento</option>
+            <option value="aniversario">Aniversário</option>
+            <option value="corporativo">Evento Corporativo</option>
+            <option value="formatura">Formatura</option>
+            <option value="inaugural">Festa de Inauguração</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="edit-field">
+          <label for="editDataEvento">Data do evento</label>
+          <input id="editDataEvento" type="date" required>
+        </div>
+        <div class="edit-field full-width">
+          <label>Restrições alimentares</label>
+          <div class="edit-restrictions">
+            <label><input type="checkbox" name="editRestricoes" value="vegetariano"> Vegetariano</label>
+            <label><input type="checkbox" name="editRestricoes" value="vegano"> Vegano</label>
+            <label><input type="checkbox" name="editRestricoes" value="semlactose"> Sem lactose</label>
+            <label><input type="checkbox" name="editRestricoes" value="alergia"> Alergia a frutos do mar</label>
+          </div>
+        </div>
+        <div class="edit-field full-width">
+          <label for="editMensagem">Mensagem adicional</label>
+          <textarea id="editMensagem" rows="3"></textarea>
+        </div>
+        <div class="edit-field full-width">
+          <label for="editRua">Rua</label>
+          <input id="editRua" type="text" required>
+        </div>
+        <div class="edit-field">
+          <label for="editNumero">Número</label>
+          <input id="editNumero" type="text" required>
+        </div>
+        <div class="edit-field">
+          <label for="editComplemento">Complemento</label>
+          <input id="editComplemento" type="text">
+        </div>
+        <div class="edit-field">
+          <label for="editBairro">Bairro</label>
+          <input id="editBairro" type="text" required>
+        </div>
+        <div class="edit-field">
+          <label for="editCidade">Cidade</label>
+          <input id="editCidade" type="text" required>
+        </div>
+        <div class="edit-field">
+          <label for="editEstado">Estado</label>
+          <input id="editEstado" type="text" maxlength="2" required>
+        </div>
+        <div class="edit-field">
+          <label for="editCep">CEP</label>
+          <input id="editCep" type="text" maxlength="9" required>
+        </div>
+        <div class="edit-actions">
+          <button type="button" class="modal-close-btn" onclick="closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn-novo-orcamento">Salvar alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     let orcamentos = [];
     const pollingInterval = 5000;
     const WHATSAPP_NUMBER = '5515997897875';
+    const updateUrlTemplate = '{% url "learning_logs:meus_orcamentos_update" 0 %}';
+    const deleteUrlTemplate = '{% url "learning_logs:meus_orcamentos_delete" 0 %}';
 
     function formatDate(dateStr) {
       if (!dateStr) return '—';
@@ -671,7 +835,11 @@
               ${whatsappButton}
             </div>
             <div>${getStatusBadge(o.status)}</div>
-            <button class="btn-ver" onclick="openModal(${o.id})">Detalhes</button>
+            <div class="orcamento-actions">
+              <button type="button" class="btn-ver" onclick="openModal(${o.id})">Detalhes</button>
+              <button type="button" class="btn-manage" onclick="editOrcamento(${o.id})">Editar</button>
+              <button type="button" class="btn-delete" onclick="deleteOrcamento(${o.id})">Excluir</button>
+            </div>
           </div>
         `;
       }).join('');
@@ -706,6 +874,103 @@
 
       document.getElementById('modalBg').classList.add('open');
     }
+
+    function editOrcamento(id) {
+      const orcamento = orcamentos.find(item => item.id === id);
+      if (!orcamento) return;
+
+      document.getElementById('editId').value = orcamento.id;
+      document.getElementById('editNome').value = orcamento.nome || '';
+      document.getElementById('editTelefone').value = orcamento.telefone || '';
+      document.getElementById('editConvidados').value = orcamento.convidados || '';
+      document.getElementById('editTipoEvento').value = orcamento.tipo_evento || '';
+      document.getElementById('editDataEvento').value = orcamento.data_evento || '';
+      document.getElementById('editMensagem').value = orcamento.mensagem || '';
+      document.getElementById('editRua').value = orcamento.rua || '';
+      document.getElementById('editNumero').value = orcamento.numero || '';
+      document.getElementById('editComplemento').value = orcamento.complemento || '';
+      document.getElementById('editBairro').value = orcamento.bairro || '';
+      document.getElementById('editCidade').value = orcamento.cidade || '';
+      document.getElementById('editEstado').value = orcamento.estado || '';
+      document.getElementById('editCep').value = orcamento.cep || '';
+
+      const restricoes = (orcamento.restricoes || '').split(',').map(item => item.trim());
+      document.querySelectorAll('input[name="editRestricoes"]').forEach(input => {
+        input.checked = restricoes.includes(input.value);
+      });
+      document.getElementById('editModalBg').classList.add('open');
+    }
+
+    function closeEditModal(event) {
+      if (!event || event.target === document.getElementById('editModalBg')) {
+        document.getElementById('editModalBg').classList.remove('open');
+      }
+    }
+
+    async function deleteOrcamento(id) {
+      if (!window.confirm('Tem certeza de que deseja excluir este orçamento?')) return;
+      const csrfToken = document.querySelector('#editForm [name="csrfmiddlewaretoken"]').value;
+      try {
+        const response = await fetch(deleteUrlTemplate.replace('/0/', `/${id}/`), {
+          method: 'DELETE',
+          headers: { 'X-CSRFToken': csrfToken }
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Não foi possível excluir o orçamento.');
+        await fetchOrcamentos();
+      } catch (error) {
+        console.error('Erro ao excluir orçamento:', error);
+        window.alert(error.message);
+      }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const id = document.getElementById('editId').value;
+      const payload = {
+        nome: document.getElementById('editNome').value.trim(),
+        telefone: document.getElementById('editTelefone').value,
+        convidados: document.getElementById('editConvidados').value,
+        tipoEvento: document.getElementById('editTipoEvento').value,
+        dataEvento: document.getElementById('editDataEvento').value,
+        restricoes: Array.from(document.querySelectorAll('input[name="editRestricoes"]:checked'))
+          .map(input => input.value),
+        mensagem: document.getElementById('editMensagem').value,
+        rua: document.getElementById('editRua').value.trim(),
+        numero: document.getElementById('editNumero').value.trim(),
+        complemento: document.getElementById('editComplemento').value.trim(),
+        bairro: document.getElementById('editBairro').value.trim(),
+        cidade: document.getElementById('editCidade').value.trim(),
+        estado: document.getElementById('editEstado').value.trim(),
+        cep: document.getElementById('editCep').value.trim()
+      };
+      const csrfToken = document.querySelector('#editForm [name="csrfmiddlewaretoken"]').value;
+      const submitButton = event.currentTarget.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+
+      try {
+        const response = await fetch(updateUrlTemplate.replace('/0/', `/${id}/`), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          const errors = Object.values(result.errors || {})
+            .flat()
+            .map(error => error.message)
+            .join('\n');
+          throw new Error(errors || result.error || 'Não foi possível atualizar o orçamento.');
+        }
+        closeEditModal();
+        await fetchOrcamentos();
+      } catch (error) {
+        console.error('Erro ao atualizar orçamento:', error);
+        window.alert(error.message);
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
 
     function closeModal(e) {
       if (e.target === document.getElementById('modalBg')) {

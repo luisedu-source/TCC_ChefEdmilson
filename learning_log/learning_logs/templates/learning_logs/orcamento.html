@@ -447,7 +447,7 @@
 
                     <div class="form-group">
                         <label for="telefone">Telefone <span class="required">*</span></label>
-                        <input type="tel" id="telefone" name="telefone" placeholder="(15) 99999-0000">
+                        <input type="tel" id="telefone" name="telefone" placeholder="(15) 99999-0000" maxlength="15" inputmode="tel" autocomplete="tel">
                         <span class="error-message" id="erroTelefone">Por favor, informe seu telefone.</span>
                     </div>
 
@@ -725,6 +725,48 @@
             window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
         }
 
+        function mostrarErrosServidor(errors) {
+            var campos = {
+                nome: { id: 'nome', erroId: 'erroNome', step: 1, label: 'Nome completo' },
+                telefone: { id: 'telefone', erroId: 'erroTelefone', step: 1, label: 'Telefone' },
+                convidados: { id: 'convidados', erroId: 'erroConvidados', step: 1, label: 'Número de convidados' },
+                tipo_evento: { id: 'tipoEvento', erroId: 'erroTipoEvento', step: 2, label: 'Tipo de evento' },
+                data_evento: { id: 'dataEvento', erroId: 'erroDataEvento', step: 2, label: 'Data do evento' },
+                rua: { id: 'rua', erroId: 'erroRua', step: 4, label: 'Rua' },
+                numero: { id: 'numero', erroId: 'erroNumero', step: 4, label: 'Número' },
+                bairro: { id: 'bairro', erroId: 'erroBairro', step: 4, label: 'Bairro' },
+                cidade: { id: 'cidade', erroId: 'erroCidade', step: 4, label: 'Cidade' },
+                estado: { id: 'estado', erroId: 'erroEstado', step: 4, label: 'Estado' },
+                cep: { id: 'cep', erroId: 'erroCep', step: 4, label: 'CEP' }
+            };
+            var mensagens = [];
+            var primeiraEtapa = null;
+
+            Object.keys(errors || {}).forEach(function (campo) {
+                var detalhes = errors[campo] || [];
+                var config = campos[campo];
+                detalhes.forEach(function (detalhe) {
+                    mensagens.push((config ? config.label : campo) + ': ' + detalhe.message);
+                });
+                if (!primeiraEtapa && config && detalhes.length) primeiraEtapa = config.step;
+                if (config && detalhes.length) {
+                    var input = document.getElementById(config.id);
+                    var erro = document.getElementById(config.erroId);
+                    if (input) input.classList.add('input-error');
+                    if (erro) {
+                        erro.textContent = detalhes[0].message;
+                        erro.classList.add('visible');
+                    }
+                }
+            });
+
+            if (primeiraEtapa) {
+                currentStep = primeiraEtapa;
+                showStep(primeiraEtapa);
+            }
+            return mensagens.join('\n');
+        }
+
         // Botões por step (cada step tem os próprios botões)
         function bindBtn(id, fn) {
             var el = document.getElementById(id);
@@ -784,7 +826,8 @@
                 if (result.success) {
                     mostrarSucesso();
                 } else {
-                    alert('Erro ao enviar orçamento: ' + (result.error || 'Tente novamente.'));
+                    var detalhes = mostrarErrosServidor(result.errors);
+                    alert('Erro ao enviar orçamento: ' + (detalhes || result.error || 'Tente novamente.'));
                     btnEnviar.disabled = false;
                     btnEnviar.innerHTML = 'Enviar <i class="bi bi-check-lg"></i>';
                 }
@@ -801,6 +844,19 @@
             var apenasNumeros = (valor || '').replace(/\D/g, '').slice(0, 8);
             if (apenasNumeros.length <= 5) return apenasNumeros;
             return apenasNumeros.slice(0, 5) + '-' + apenasNumeros.slice(5);
+        }
+
+        function formatarTelefone(valor) {
+            var digitos = (valor || '').replace(/\D/g, '').slice(0, 11);
+            if (!digitos) return '';
+            if (digitos.length <= 2) return '(' + digitos;
+
+            var ddd = digitos.slice(0, 2);
+            var numero = digitos.slice(2);
+            if (digitos.length < 10) return '(' + ddd + ') ' + numero;
+
+            var tamanhoNumero = digitos.length === 11 ? 5 : 4;
+            return '(' + ddd + ') ' + numero.slice(0, tamanhoNumero) + '-' + numero.slice(tamanhoNumero);
         }
 
         function buscarCep() {
@@ -847,6 +903,13 @@
                 if (valor.length === 8) {
                     buscarCep();
                 }
+            });
+        }
+
+        var telefoneInput = document.getElementById('telefone');
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', function () {
+                telefoneInput.value = formatarTelefone(telefoneInput.value);
             });
         }
 

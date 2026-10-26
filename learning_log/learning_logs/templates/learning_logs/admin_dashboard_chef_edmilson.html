@@ -427,6 +427,13 @@
       var p = dateStr.split('-');
       return escapeHtml(p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : dateStr);
     }
+    function formatPhone(phone) {
+      var digits = String(phone || '').replace(/\D/g, '');
+      if (digits.length !== 10 && digits.length !== 11) return phone || '—';
+      var numberLength = digits.length === 11 ? 5 : 4;
+      return '(' + digits.slice(0, 2) + ') ' +
+        digits.slice(2, 2 + numberLength) + '-' + digits.slice(2 + numberLength);
+    }
     function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : '—'; }
 
     function render() {
@@ -438,7 +445,7 @@
         var status = ['pendente', 'respondido', 'recusado'].includes(o.status) ? o.status : 'pendente';
         return '<tr>' +
           '<td class="name">' + escapeHtml(o.nome || '—') + '</td>' +
-          '<td><div>' + escapeHtml(o.telefone || '—') + '</div></td>' +
+          '<td><div>' + escapeHtml(formatPhone(o.telefone)) + '</div></td>' +
           '<td>' + escapeHtml(cap(o.tipo_evento)) + '</td>' +
           '<td>' + fmt(o.data_evento) + '</td>' +
           '<td>' + escapeHtml(o.convidados || '—') + '</td>' +
@@ -455,7 +462,7 @@
       currentId = id;
       document.getElementById('mNome').textContent       = o.nome        || '—';
       document.getElementById('mConv').textContent       = (o.convidados || '—') + ' pessoas';
-      document.getElementById('mTel').textContent        = o.telefone    || '—';
+      document.getElementById('mTel').textContent        = formatPhone(o.telefone);
       document.getElementById('mEvento').textContent     = cap(o.tipo_evento);
       document.getElementById('mData').textContent       = fmt(o.data_evento);
       document.getElementById('mRestricoes').textContent = o.restricoes  || 'Nenhuma';

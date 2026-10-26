@@ -41,8 +41,28 @@ def orcamento_submit(request):
     except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
 
+    form, error_response = _orcamento_form_from_data(data)
+    if error_response:
+        return error_response
+    if not form.is_valid():
+        return JsonResponse(
+            {'success': False, 'error': 'Verifique os dados informados.', 'errors': form.errors.get_json_data()},
+            status=400,
+        )
+
+    orcamento = form.save(commit=False)
+    if request.user.is_authenticated:
+        orcamento.user = request.user
+    orcamento.save()
+    return JsonResponse(
+        {'success': True, 'message': 'Orçamento enviado com sucesso!'},
+        status=201,
+    )
+
+
+def _orcamento_form_from_data(data):
     if not isinstance(data, dict):
-        return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
+        return None, JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
 
     restricoes = data.get('restricoes', [])
     restricoes_validas = {'vegetariano', 'vegano', 'semlactose', 'alergia'}
@@ -50,17 +70,17 @@ def orcamento_submit(request):
         not isinstance(restricoes, list)
         or any(not isinstance(item, str) or item not in restricoes_validas for item in restricoes)
     ):
-        return JsonResponse({'success': False, 'error': 'Restrições alimentares inválidas.'}, status=400)
+        return None, JsonResponse({'success': False, 'error': 'Restrições alimentares inválidas.'}, status=400)
 
     campos_texto = (
         'nome', 'telefone', 'tipoEvento', 'dataEvento', 'mensagem', 'rua',
         'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep',
     )
     if any(data.get(campo) is not None and not isinstance(data.get(campo), str) for campo in campos_texto):
-        return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
+        return None, JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
     convidados = data.get('convidados')
     if isinstance(convidados, bool) or not isinstance(convidados, (int, str)):
-        return JsonResponse({'success': False, 'error': 'Número de convidados inválido.'}, status=400)
+        return None, JsonResponse({'success': False, 'error': 'Número de convidados inválido.'}, status=400)
 
     form_data = {
         'nome': data.get('nome'),
@@ -78,21 +98,46 @@ def orcamento_submit(request):
         'estado': data.get('estado'),
         'cep': data.get('cep'),
     }
-    form = OrcamentoPublicForm(form_data)
+    return OrcamentoPublicForm(form_data), None
+
+
+@login_required
+@require_http_methods(["PATCH"])
+def meus_orcamentos_update(request, id):
+    """Atualiza um orçamento pertencente ao cliente autenticado."""
+    orcamento = get_object_or_404(Orcamento, id=id, user=request.user)
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({'success': False, 'error': 'Dados inválidos.'}, status=400)
+
+    form, error_response = _orcamento_form_from_data(data)
+    if error_response:
+        return error_response
     if not form.is_valid():
         return JsonResponse(
             {'success': False, 'error': 'Verifique os dados informados.', 'errors': form.errors.get_json_data()},
             status=400,
         )
 
-    orcamento = form.save(commit=False)
-    if request.user.is_authenticated:
-        orcamento.user = request.user
+    updated_orcamento = form.save(commit=False)
+    for field in (
+        'nome', 'telefone', 'convidados', 'tipo_evento', 'data_evento',
+        'restricoes', 'mensagem', 'rua', 'numero', 'complemento',
+        'bairro', 'cidade', 'estado', 'cep',
+    ):
+        setattr(orcamento, field, getattr(updated_orcamento, field))
     orcamento.save()
-    return JsonResponse(
-        {'success': True, 'message': 'Orçamento enviado com sucesso!'},
-        status=201,
-    )
+    return JsonResponse({'success': True, 'message': 'Orçamento atualizado com sucesso.'})
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def meus_orcamentos_delete(request, id):
+    """Exclui um orçamento pertencente ao cliente autenticado."""
+    orcamento = get_object_or_404(Orcamento, id=id, user=request.user)
+    orcamento.delete()
+    return JsonResponse({'success': True, 'message': 'Orçamento excluído com sucesso.'})
 
 
 def is_admin(user):
