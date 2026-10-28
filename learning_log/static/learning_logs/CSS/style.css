@@ -202,6 +202,14 @@ html {
   display: inline-flex !important;
 }
 
+body.body-bg .logo-light-link {
+  display: inline-flex !important;
+}
+
+body.body-bg .logo-dark-link {
+  display: none !important;
+}
+
 body:has(.orcamento-container) .logo-light-link,
 body.sobre-page .logo-light-link,
 body.login-page .logo-light-link,
@@ -2490,6 +2498,14 @@ body.signup-page .btn-login:hover i {
 body.privacy-page .logo-link img {
   filter: brightness(0) saturate(100%) !important;
   -webkit-filter: brightness(0) saturate(100%) !important;
+  opacity: 1 !important;
+}
+
+body.body-bg .logo-light-link img,
+body.body-bg .logo-dark-link img,
+body.body-bg .topo .logo-link img {
+  filter: none !important;
+  -webkit-filter: none !important;
   opacity: 1 !important;
 }
 
